@@ -1,0 +1,214 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+.webax-logo {
+  width: 3rem;
+}
+
+/* Webkit Browsers */
+::-webkit-scrollbar {
+  width: 5px;
+  /* width of the entire scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(68, 65, 65);
+  /* color of the track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(68, 65, 65);
+  /* color of the scroll thumb */
+  border-radius: 10px;
+  /* roundness of the scroll thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(68, 65, 65);
+  /* color of the scroll thumb when hovered */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  /* thin scrollbar width */
+  scrollbar-color: rgb(68, 65, 65) #f1f1f1;
+  /* color of the thumb and track */
+}
+
+/* Internet Explorer and Edge */
+div {
+  -ms-overflow-style: scrollbar;
+  /* make sure IE and Edge show scrollbars */
+}
+
+.form-control {
+  border: 1px solid #dae2ed !important;
+  background-color: white !important;
+  height: 39px !important;
+  border-radius: 8px !important;
+  width: 100% !important;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}
+.flag-dropdown {
+  border: 1px solid #dae2ed !important;
+  background-color: white !important;
+  height: 39px !important;
+  border-top-left-radius: 8px !important;
+  border-end-start-radius: 8px !important;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.inp-err .base-Input-input,
+.inp-err .css-ex1uc7,
+.inp-err .css-16kcbvq,
+.inp-err .css-yogwjk {
+  border: 1px solid red !important;
+  border-radius: 8px !important;
+}
+
+.inp-err .base-Input-input:hover,
+.inp-err .css-ex1uc7:hover,
+.inp-err .css-yogwjk:hover,
+.inp-err .base-Input-input:focus,
+.inp-err .css-ex1uc7:focus .inp-err .css-yogwjk:focus {
+  border: 1px solid rgb(255, 99, 71) !important; /* A lighter red */
+  box-shadow: 0 0 0 3px rgba(255, 99, 71, 0.5) !important; /* Softer shadow effect */
+}
+
+.bg-inp-custom input {
+  background: #f0edffcc;
+}
+
+/* phone input styles */
+.text-error {
+  color: red;
+}
+
+.phone-input input {
+  border-color: #ccc;
+  transition: border-color 0.3s ease;
+}
+
+.phone-input.input-error input {
+  border-color: red !important; /* Override library styles */
+}
+
+.phone-input.input-error input:focus {
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.3); /* Add red focus effect */
+}
+
+.phone-input {
+  width: 100%; /* Optional, adjust input width */
+}
+
+.MuiAutocomplete-listbox {
+  z-index: 1300; /* Adjust this value if necessary */
+}
+
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 1.5s ease-in-out;
+}
+
+.logo {
+  height: 60px; /* Default size for small screens */
+  transition: transform 1.5s ease-in-out, opacity 1.5s ease-in-out;
+}
+
+/* Media query for large screens (lg and up) */
+@media (min-width: 1024px) {
+  .logo {
+    height: 100px;
+  }
+}
+
+.fade-out .logo {
+  transform: scale(2);
+  opacity: 0;
+}
+
+.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#menu-btn-label {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0px 8px;
+  cursor: pointer;
+}
+
+#menu-btn-label span {
+  border-radius: 10px;
+  height: 2px;
+  margin: 2px -1px;
+  transition: 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+}
+
+#menu-btn-label span:nth-of-type(1) {
+  width: 50%;
+}
+
+#menu-btn-label span:nth-of-type(2) {
+  width: 100%;
+}
+
+#menu-btn-label span:nth-of-type(3) {
+  width: 75%;
+}
+
+#menu-btn-label input[type='checkbox'] {
+  display: none;
+}
+
+#menu-btn-label input[type='checkbox']:checked ~ span:nth-of-type(1) {
+  transform-origin: bottom;
+  transform: rotatez(45deg) translate(2.5px, 1px);
+}
+
+#menu-btn-label input[type='checkbox']:checked ~ span:nth-of-type(2) {
+  transform-origin: top;
+  transform: rotatez(-45deg);
+}
+
+#menu-btn-label input[type='checkbox']:checked ~ span:nth-of-type(3) {
+  transform-origin: bottom;
+  width: 60%;
+  transform: translate(6px, -4px) rotatez(45deg);
+}
+
+/* data table padding */
+/* .custom-row-padding {
+  padding-top: 8px;
+  padding-bottom: 8px;
+} */
+
+.todo-dashboard-label {
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  margin-bottom: 0 !important;
+  display: flex;
+  align-items: center;
+}
+
+.todo-dashboard-divider {
+  height: 1px;
+  background-color: hsl(220deg 20% 80% / 40%);;
+  align-self: center;
+  flex-grow: 1;
+  margin: 0 10px; /* spacing between label and divider */
+}
