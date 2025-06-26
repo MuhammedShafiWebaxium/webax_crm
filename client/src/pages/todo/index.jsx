@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { handleFormError } from '../../utils/handleFormError';
 import { stopLoading } from '../../redux/loadingSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import CustomDialog from '../../components/customComponents/CustomDialog';
+import CustomDialog from '../../components/CustomComponents/CustomDialog';
 import CreateTodo from '../../components/CreateTodo';
 import {
   deleteTodo,
@@ -13,7 +13,7 @@ import { setUsers } from '../../redux/companySlice';
 import { format, isToday, isYesterday, isTomorrow } from 'date-fns';
 import { setTodos } from '../../redux/todoSlice';
 import { Link, Stack, Typography, useTheme } from '@mui/material';
-import BasicDataGrid from '../../components/customComponents/BasicDataGrid';
+import BasicDataGrid from '../../components/CustomComponents/BasicDataGrid';
 import { useNavigate } from 'react-router-dom';
 
 const displayDate = (date) => {

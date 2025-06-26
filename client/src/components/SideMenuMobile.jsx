@@ -15,7 +15,7 @@ import CardAlert from './CardAlert';
 import { useDispatch, useSelector } from 'react-redux';
 import { logOut } from '../redux/userSlice';
 import { useNavigate } from 'react-router-dom';
-import Notifications from './customComponents/Notifications';
+import Notifications from './CustomComponents/Notifications';
 
 function SideMenuMobile({ open, toggleDrawer }) {
   const dispatch = useDispatch();

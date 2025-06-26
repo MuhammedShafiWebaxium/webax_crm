@@ -2,18 +2,18 @@ import * as Yup from 'yup';
 import { Box, Typography } from '@mui/material';
 import StatCard from '../../components/StatCard';
 import Grid from '@mui/material/Grid2';
-import CustomInput from '../../components/customComponents/CustomInput';
-import CustomComboBox from '../../components/customComponents/CustomComboBox';
-import CustomButton from '../../components/customComponents/CustomButton';
+import CustomInput from '../../components/CustomComponents/CustomInput';
+import CustomComboBox from '../../components/CustomComponents/CustomComboBox';
+import CustomButton from '../../components/CustomComponents/CustomButton';
 import { useNavigate, useParams } from 'react-router-dom';
-import CountryCodeInput from '../../components/customComponents/CountryCodeInput';
+import CountryCodeInput from '../../components/CustomComponents/CountryCodeInput';
 import { useEffect, useRef, useState } from 'react';
 import { showAlert } from '../../redux/alertSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { genderOptions } from '../../constants';
 import { startLoading, stopLoading } from '../../redux/loadingSlice';
 import { handleFormError } from '../../utils/handleFormError';
-import CustomTextarea from '../../components/customComponents/CustomTextArea';
+import CustomTextarea from '../../components/CustomComponents/CustomTextArea';
 import {
   createLead,
   getLeadFormData,

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { startLoading, stopLoading } from '../../redux/loadingSlice';
 import { handleFormError } from '../../utils/handleFormError';
 import { Box, Link, Stack, Typography, useTheme } from '@mui/material';
-import BasicDataGrid from '../../components/customComponents/BasicDataGrid';
+import BasicDataGrid from '../../components/CustomComponents/BasicDataGrid';
 import { renderStatus } from '../../internals/data/GridData';
 
 const UsersList = () => {

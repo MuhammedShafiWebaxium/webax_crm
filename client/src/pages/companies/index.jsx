@@ -6,7 +6,7 @@ import { startLoading, stopLoading } from '../../redux/loadingSlice';
 import { handleFormError } from '../../utils/handleFormError';
 import { formatDate, renderStatus } from '../../internals/data/GridData';
 import { Box, Link, Stack, Typography, useTheme } from '@mui/material';
-import BasicDataGrid from '../../components/customComponents/BasicDataGrid';
+import BasicDataGrid from '../../components/CustomComponents/BasicDataGrid';
 
 const CompaniesList = () => {
   const theme = useTheme();

@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import CustomizedSnackbar from '../components/customComponents/CustomSnackbar';
+import CustomizedSnackbar from '../components/CustomComponents/CustomSnackbar';
 
 const AuthLayout = () => {
   return (

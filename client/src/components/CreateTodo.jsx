@@ -1,8 +1,8 @@
 import * as Yup from 'yup';
 import Grid from '@mui/material/Grid2';
 import { useEffect, useRef, useState } from 'react';
-import CustomInput from './customComponents/CustomInput';
-import CustomComboBox from './customComponents/CustomComboBox';
+import CustomInput from './CustomComponents/CustomInput';
+import CustomComboBox from './CustomComponents/CustomComboBox';
 import { formatDateTime, todoPriorityOptions } from '../constants';
 import { Box, Button, Checkbox, FormControlLabel, Stack } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createTodo, updateTodo } from '../services/todosServices';
 import { handleFormError } from '../utils/handleFormError';
 import { setTodos } from '../redux/todoSlice';
-import CustomTextarea from './customComponents/CustomTextArea';
+import CustomTextarea from './CustomComponents/CustomTextArea';
 import { showAlert } from '../redux/alertSlice';
 import { useNavigate } from 'react-router-dom';
 

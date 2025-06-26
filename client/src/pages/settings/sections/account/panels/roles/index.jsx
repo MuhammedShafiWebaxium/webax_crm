@@ -12,10 +12,10 @@ import {
 } from '@mui/material';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import AddIcon from '@mui/icons-material/Add';
-import BasicDataGrid from '../../../../../../components/customComponents/BasicDataGrid';
-import CustomInput from '../../../../../../components/customComponents/CustomInput';
+import BasicDataGrid from '../../../../../../components/CustomComponents/BasicDataGrid';
+import CustomInput from '../../../../../../components/CustomComponents/CustomInput';
 import CheckboxLabels from '../../../../../../components/CustomComponents/CheckboxLabels';
-import CustomButton from '../../../../../../components/customComponents/CustomButton';
+import CustomButton from '../../../../../../components/CustomComponents/CustomButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { showAlert } from '../../../../../../redux/alertSlice';
 import { handleFormError } from '../../../../../../utils/handleFormError';

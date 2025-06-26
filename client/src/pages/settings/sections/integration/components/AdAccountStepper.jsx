@@ -9,7 +9,7 @@ import { List, ListItem, ListItemText } from '@mui/material';
 import AdAccountForm from './AdAccountForm';
 import { stopLoading } from '../../../../../redux/loadingSlice';
 import { useDispatch } from 'react-redux';
-import CustomButton from '../../../../../components/customComponents/CustomButton';
+import CustomButton from '../../../../../components/CustomComponents/CustomButton';
 import { useNavigate } from 'react-router-dom';
 
 const steps = ['App Setup', 'Create ad account'];

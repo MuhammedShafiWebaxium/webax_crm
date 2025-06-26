@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { startLoading, stopLoading } from '../../redux/loadingSlice';
 import { handleFormError } from '../../utils/handleFormError';
 import { deleteLead, getAllLeads } from '../../services/leadServices';
-import BasicDataGrid from '../../components/customComponents/BasicDataGrid';
+import BasicDataGrid from '../../components/CustomComponents/BasicDataGrid';
 import { renderStatus } from '../../internals/data/GridData';
 import { Box, Typography, useTheme, Link, Stack } from '@mui/material';
 

@@ -3,12 +3,12 @@ import * as Yup from 'yup';
 import Grid from '@mui/material/Grid2';
 import { stopLoading } from '../../../../../redux/loadingSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import CustomInput from '../../../../../components/customComponents/CustomInput';
+import CustomInput from '../../../../../components/CustomComponents/CustomInput';
 import { handleFormError } from '../../../../../utils/handleFormError';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createAdAccount } from '../../../../../services/settingServices';
 import { Box } from '@mui/material';
-import CustomButton from '../../../../../components/customComponents/CustomButton';
+import CustomButton from '../../../../../components/CustomComponents/CustomButton';
 import { showAlert } from '../../../../../redux/alertSlice';
 import { setUser } from '../../../../../redux/userSlice';
 

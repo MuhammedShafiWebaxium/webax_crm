@@ -8,13 +8,13 @@ import { followupLead, getLead } from '../../services/leadServices';
 import { Box, Divider, Stack, Tooltip, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { eligibilityOptions, genderOptions } from '../../constants';
-import CustomInput from '../../components/customComponents/CustomInput';
-import CustomComboBox from '../../components/customComponents/CustomComboBox';
-import CountryCodeInput from '../../components/customComponents/CountryCodeInput';
-import CustomButton from '../../components/customComponents/CustomButton';
+import CustomInput from '../../components/CustomComponents/CustomInput';
+import CustomComboBox from '../../components/CustomComponents/CustomComboBox';
+import CountryCodeInput from '../../components/CustomComponents/CountryCodeInput';
+import CustomButton from '../../components/CustomComponents/CustomButton';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { showAlert } from '../../redux/alertSlice';
-import CustomTextarea from '../../components/customComponents/CustomTextArea';
+import CustomTextarea from '../../components/CustomComponents/CustomTextArea';
 
 const statusInputHelper = (
   <Stack direction="row" alignItems="center">

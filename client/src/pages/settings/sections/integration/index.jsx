@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import StatCard from '../../../../components/StatCard';
-import BasicDataGrid from '../../../../components/customComponents/BasicDataGrid';
+import BasicDataGrid from '../../../../components/CustomComponents/BasicDataGrid';
 import { formatDate, renderStatus } from '../../../../internals/data/GridData';
 import {
   activateAdAccount,

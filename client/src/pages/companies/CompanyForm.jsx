@@ -12,10 +12,10 @@ import { startLoading, stopLoading } from '../../redux/loadingSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import StatCard from '../../components/StatCard';
-import CustomInput from '../../components/customComponents/CustomInput';
-import CountryCodeInput from '../../components/customComponents/CountryCodeInput';
-import CustomComboBox from '../../components/customComponents/CustomComboBox';
-import CustomButton from '../../components/customComponents/CustomButton';
+import CustomInput from '../../components/CustomComponents/CustomInput';
+import CountryCodeInput from '../../components/CustomComponents/CountryCodeInput';
+import CustomComboBox from '../../components/CustomComponents/CustomComboBox';
+import CustomButton from '../../components/CustomComponents/CustomButton';
 import { showAlert } from '../../redux/alertSlice';
 import { handleFormError } from '../../utils/handleFormError';
 

@@ -5,9 +5,9 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import HighlightedCard from './HighlightedCard';
 import StatCard from './StatCard';
-import CustomLineChart from './customComponents/CustomLineChart';
-import CustomCard from './customComponents/CustomCard';
-import BasicDataGrid from './customComponents/BasicDataGrid';
+import CustomLineChart from './CustomComponents/CustomLineChart';
+import CustomCard from './CustomComponents/CustomCard';
+import BasicDataGrid from './CustomComponents/BasicDataGrid';
 import { useEffect, useRef, useState } from 'react';
 import {
   formatDate,
@@ -16,10 +16,10 @@ import {
 } from '../internals/data/GridData';
 import { useTheme } from '@mui/material/styles';
 import { Chip, Link, Skeleton } from '@mui/material';
-import CustomInput from './customComponents/CustomInput';
-import DraggableDialog from './customComponents/DraggableDialog';
+import CustomInput from './CustomComponents/CustomInput';
+import DraggableDialog from './CustomComponents/DraggableDialog';
 import { useDispatch, useSelector } from 'react-redux';
-import CustomComboBox from './customComponents/CustomComboBox';
+import CustomComboBox from './CustomComponents/CustomComboBox';
 import { showAlert } from '../redux/alertSlice';
 import { useNavigate } from 'react-router-dom';
 import { stopLoading } from '../redux/loadingSlice';
