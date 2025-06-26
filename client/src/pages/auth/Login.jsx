@@ -15,8 +15,8 @@ import {
   GoogleIcon,
   SitemarkIcon,
 } from '../../internals/components/CustomIcons';
-import CustomInput from '../../components/customComponents/CustomInput';
-import CustomButton from '../../components/customComponents/CustomButton';
+import CustomInput from '../../components/CustomComponents/CustomInput';
+import CustomButton from '../../components/CustomComponents/CustomButton';
 import { loginUser } from '../../services/indexServices';
 import { useDispatch, useSelector } from 'react-redux';
 import { stopLoading } from '../../redux/loadingSlice';
