@@ -2,7 +2,7 @@ import cors from 'cors';
 
 const configureCors = () =>
   cors({
-    origin: process.env.URL,
+    origin: process.env.URL_LOCALE,
     credentials: true,
   });
 

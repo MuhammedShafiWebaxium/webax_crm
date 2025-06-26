@@ -1,11 +1,12 @@
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = 'http://localhost:4000'; // Change if needed
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+const LOCALE_URL = import.meta.env.VITE_LOCALE_URL;
 let socket = null;
 
 export const connectSocket = (userId) => {
   if (!socket) {
-    socket = io(SOCKET_URL, {
+    socket = io(SERVER_URL, {
       autoConnect: false,
       withCredentials: true,
       transports: ['websocket'],
