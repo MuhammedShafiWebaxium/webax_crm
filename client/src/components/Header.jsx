@@ -5,8 +5,8 @@ import ColorModeIconDropdown from '../theme/shared/ColorModeIconDropdown';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 
 import Search from './Search';
-import CustomDateRange from './customComponents/CustomDateRange';
-import Notifications from './customComponents/Notifications';
+import CustomDateRange from './CustomComponents/CustomDateRange';
+import Notifications from './CustomComponents/Notifications';
 import SortSharpIcon from '@mui/icons-material/SortSharp';
 import NotesSharpIcon from '@mui/icons-material/NotesSharp';
 import { Box, InputLabel } from '@mui/material';
