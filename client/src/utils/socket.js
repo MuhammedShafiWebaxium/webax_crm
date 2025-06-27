@@ -1,12 +1,11 @@
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.SOCKET_URL;
+const VITE_SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 let socket = null;
-console.log('SOCKET_URL', SOCKET_URL); // Check it's not undefined
 
 export const connectSocket = (userId) => {
   if (!socket) {
-    socket = io(SOCKET_URL, {
+    socket = io(VITE_SOCKET_URL, {
       autoConnect: false,
       withCredentials: true,
       transports: ['websocket'],
