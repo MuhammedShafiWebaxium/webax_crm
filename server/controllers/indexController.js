@@ -50,8 +50,10 @@ export const loginUser = async (req, res, next) => {
     res
       .cookie('access__', token, {
         httpOnly: true,
-        secure: false, // Set to true in production over HTTPS
-        sameSite: 'lax', // or 'none' if secure + cross-site
+        secure: true,
+        sameSite: 'none',
+        // secure: false, // Set to true in production over HTTPS
+        // sameSite: 'lax', // or 'none' if secure + cross-site
       })
       .status(200)
       .json({ status: 'success', user: { ...userWithoutPassword } });

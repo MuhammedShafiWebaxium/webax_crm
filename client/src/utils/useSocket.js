@@ -19,7 +19,7 @@ const useSocket = (userId, onUserUpdate) => {
     });
 
     socket.on('userUpdated', (updatedUserData) => {
-      // console.log('📩 User data updated:', updatedUserData);
+      console.log('📩 User data updated:', updatedUserData);
       if (onUserUpdate) {
         onUserUpdate(updatedUserData);
       }

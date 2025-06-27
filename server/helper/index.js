@@ -13,10 +13,11 @@ export const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 // companies helper
 export const getAllCompaniesHelper = async () => {
   try {
-    const companies = await Companies.find({ status: 'Active' }).populate(
-      'roles',
-      'name'
-    );
+    const companies = await Companies.find({ status: 'Active' }).populate({
+      path: 'roles',
+      match: { active: true },
+      select: 'name'
+    });
     return companies;
   } catch (err) {
     console.error('Error fetching companies:', err);
