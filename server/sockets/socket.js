@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 let io;
 
-export const initializeSocket = (server) => {
+export const initializeSocket = (server) => {console.log(process.env.URL)
   io = new Server(server, {
     cors: {
       origin: process.env.URL, // Update with your frontend URL
