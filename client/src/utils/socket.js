@@ -2,7 +2,7 @@ import { io } from 'socket.io-client';
 
 const VITE_SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 let socket = null;
-
+console.log(VITE_SOCKET_URL)
 export const connectSocket = (userId) => {
   if (!socket) {
     socket = io(VITE_SOCKET_URL, {
