@@ -15,7 +15,6 @@ export const getAllCompaniesHelper = async () => {
   try {
     const companies = await Companies.find({ status: 'Active' }).populate({
       path: 'roles',
-      match: { active: true },
       select: 'name'
     });
     return companies;

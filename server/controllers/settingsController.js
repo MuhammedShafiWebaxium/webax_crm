@@ -1,7 +1,9 @@
+import mongoose from 'mongoose';
 import { isValidObjectId } from '../helper/index.js';
 import Settings from '../models/settings.js';
 import Roles from '../models/roles.js';
 import Users from '../models/user.js';
+import Companies from '../models/company.js';
 
 export const getAllRoles = async (req, res, next) => {
   try {
@@ -18,6 +20,9 @@ export const getAllRoles = async (req, res, next) => {
 };
 
 export const createRole = async (req, res, next) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const {
       user: { userId, company },
@@ -59,12 +64,22 @@ export const createRole = async (req, res, next) => {
     assignPermissions('about', about);
     assignPermissions('feedback', feedback);
 
-    await newRole.save();
+    const role = await newRole.save({ session });
+
+    await Companies.updateOne(
+      { _id: company },
+      { $push: { roles: role._id } },
+      { session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
 
     const roles = await Roles.find({ company }).populate('createdBy', 'name');
-
     res.status(200).json({ status: 'success', roles });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
     next(err);
   }
 };
@@ -336,7 +351,7 @@ export const deleteIntegration = async (req, res, next) => {
 
       return account;
     });
-    
+
     await settings.save();
 
     res.status(200).json({
