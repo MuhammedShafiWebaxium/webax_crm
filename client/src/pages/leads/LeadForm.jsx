@@ -153,8 +153,8 @@ const LeadForm = () => {
     leadSource: Yup.string().required('Source is Required'),
     initialNote: Yup.string().required('Notes is Required'),
     salesRepresentative: canAssign
-      ? Yup.string().required('Sales Representative is Required')
-      : Yup.string().nullable(),
+      ? Yup.string().nullable()
+      : Yup.string().required('Sales Representative is Required'),
   });
 
   const handleInputChange = async (event, isValid) => {

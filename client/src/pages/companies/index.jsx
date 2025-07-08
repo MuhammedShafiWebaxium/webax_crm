@@ -104,7 +104,7 @@ const CompaniesList = () => {
       source: company?.source ?? 'N/A',
       industry: company?.industry ?? 'N/A',
       staffLimit: company?.staffLimit ?? 'N/A',
-      staffAndLimit: `${company?.staffLimit} (${company?.users?.length})`,
+      staffAndLimit: `${company?.users?.length} (${company?.staffLimit})`,
     }));
 
   useEffect(() => {
