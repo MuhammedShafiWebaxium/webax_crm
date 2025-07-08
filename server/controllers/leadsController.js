@@ -115,9 +115,7 @@ export const createLead = async (req, res, next) => {
         `The lead already exists${isLeadExist.deleted ? ` (Deleted).` : '.'}`
       );
 
-    const isSelfAssign = String(salesRepresentative) === String(userId);
-
-    if ((salesRepresentative && canAssign) || !isSelfAssign) {
+    if (salesRepresentative && canAssign) {
       const salesRepRecord = await getUserHelper(salesRepresentative, company, {
         name: 1,
         email: 1,
@@ -130,6 +128,8 @@ export const createLead = async (req, res, next) => {
     } else {
       assignedNote = `Lead created by ${name} (${email}) and assigned to themselves. ${initialNote}`;
     }
+
+    const isSelfAssign = String(staff) === String(userId);
 
     const today = new Date();
     const totalLeadsCount = await Leads.countDocuments({ company });

@@ -14,7 +14,7 @@ export const startNotificationCron = async () => {
       scheduledFor: { $gte: twoMinutesAgo, $lte: now },
       deleted: false,
       hasBeenSent: false,
-    }).lean();
+    })
 
     for (const notification of notifications) {
       let usersToNotify = [];
