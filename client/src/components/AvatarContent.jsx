@@ -1,9 +1,9 @@
 import { Avatar, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import webaxLogoWhite from '../assets/webax-logo-white.webp';
-import webaxLogoWhiteSm from '../assets/webax-logo.png';
-import webaxLogoBlack from '../assets/webax-logo.png';
-import webaxLogoBlackSm from '../assets/webax-logo.png';
+import webaxLogoWhiteSm from '../assets/webax-logo-sm-white.png';
+import webaxLogoBlack from '../assets/webax-logo-black.png';
+import webaxLogoBlackSm from '../assets/webax-logo-sm-black.png';
 
 export default function AvatarContent({ collapse }) {
   const theme = useTheme();
@@ -11,8 +11,8 @@ export default function AvatarContent({ collapse }) {
   const logo =
     theme.palette.mode === 'light'
       ? collapse
-        ? webaxLogoWhiteSm
-        : webaxLogoWhite
+        ? webaxLogoBlackSm
+        : webaxLogoBlack
       : collapse
       ? webaxLogoWhiteSm
       : webaxLogoWhite;
