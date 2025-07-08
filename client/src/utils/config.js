@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const LOCALE_URL = import.meta.env.VITE_LOCALE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 export const axiosInstance = axios.create({
-  baseURL: SERVER_URL,
+  baseURL: API_URL,
   withCredentials: true,
 });

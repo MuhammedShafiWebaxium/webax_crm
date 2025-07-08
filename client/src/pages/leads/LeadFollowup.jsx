@@ -161,7 +161,10 @@ const LeadFollowup = () => {
       exCludeFollowupDate.includes(formValues.current.status) ||
       followupDateNotMandatory.includes(formValues.current.status)
         ? Yup.string()
-        : Yup.string().required('Next Followup is Required'),
+        : Yup.date()
+            .typeError('Next Followup must be a valid date and time')
+            .required('Next Followup is Required')
+            .min(new Date(), 'Next Followup must be in the future'),
     notes: Yup.string().required('Notes is Required'),
   });
 

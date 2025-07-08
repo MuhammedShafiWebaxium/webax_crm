@@ -2,7 +2,7 @@ import Company from '../models/company.js';
 import Settings from '../models/settings.js';
 import Roles from '../models/roles.js';
 import mongoose from 'mongoose';
-import { isValidObjectId } from '../helper/index.js';
+import { isValidObjectId } from '../helper/indexHelper.js';
 
 const getAllCompanies = async (req, res, next) => {
   try {

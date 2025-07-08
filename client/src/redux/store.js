@@ -7,6 +7,7 @@ import alertReducer from './alertSlice';
 import userReducer from './userSlice';
 import companyReducer from './companySlice';
 import todoReducer from './todoSlice';
+import notificationReducer from './notificationSlice';
 
 const persistConfig = {
   key: 'root',
@@ -20,6 +21,7 @@ const reducer = combineReducers({
   user: userReducer,
   company: companyReducer,
   todo: todoReducer,
+  notification: notificationReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

@@ -15,6 +15,8 @@ import CustomizedSnackbar from '../components/CustomComponents/CustomSnackbar';
 import { Outlet } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import NotificationSnackbar from '../components/CustomComponents/NotificationSnackbar';
+import { addNotification } from '../redux/notificationSlice';
 
 const RootLayout = () => {
   const dispatch = useDispatch();
@@ -27,10 +29,9 @@ const RootLayout = () => {
 
   const [collapse, setCollapse] = React.useState(false);
 
-  // Connect to Socket.io and listen for user updates
-  useSocket(currentUser._id, (updatedUserData) => {
-    dispatch(setUser(updatedUserData)); // ✅ Correct Redux update
-  });
+  const [newNotification, setNewNotification] = React.useState(null);
+
+  const { list } = useSelector((state) => state.notification);
 
   const handleTop = () => {
     ref.current.scrollTop = 0;
@@ -44,6 +45,25 @@ const RootLayout = () => {
       if (pos) setPos(false);
     }
   };
+
+  // ✅ Socket connection at top-level
+  useSocket(
+    currentUser?._id,
+    (updatedUserData) => {
+      dispatch(setUser(updatedUserData));
+    },
+    (newNotification) => {
+      const isExist = list.find(
+        (entry) => String(entry?._id) === String(newNotification?._id)
+      );
+
+      if (!isExist) {
+        dispatch(addNotification(newNotification));
+      }
+
+      setNewNotification(newNotification);
+    }
+  );
 
   React.useEffect(() => {
     const temp = ref.current;
@@ -85,9 +105,17 @@ const RootLayout = () => {
             <Header collapse={collapse} setCollapse={setCollapse} />
             <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '2500px' } }}>
               {/* Common Alert Start*/}
+
               <CustomizedSnackbar />
 
               {/* Common Alert End*/}
+
+              {/* Notification Start*/}
+
+              <NotificationSnackbar notification={newNotification} />
+
+              {/* Notification End*/}
+
               <Outlet />
               <Copyright sx={{ my: 4 }} />
             </Box>

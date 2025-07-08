@@ -7,7 +7,7 @@ let io;
 export const initializeSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: process.env.URL, // Update with your frontend URL
+      origin: process.env.CLIENT_URL, // Update with your frontend URL
       methods: ['GET', 'POST'],
       credentials: true,
     },
@@ -34,7 +34,7 @@ export const initializeSocket = (server) => {
   });
 
   io.on('connection', (socket) => {
-    socket.on('subscribeToUserUpdates', (userId) => {
+    socket.on('broadcastNotification', (userId) => {
       if (String(socket.user.id) !== String(userId)) {
         return; // Prevent unauthorized room joins
       }
@@ -50,7 +50,19 @@ export const initializeSocket = (server) => {
 
 // Function to notify users about updates
 export const notifyUserUpdate = (userId, newUserData) => {
-  if (io) {
-    io.to(String(userId)).emit('userUpdated', newUserData);
+  if (!io) {
+    console.warn('⚠️ Socket.IO not initialized');
+    return;
   }
+  
+  io.to(String(userId)).emit('userUpdated', newUserData);
+};
+
+export const emitNotification = (userId, notificationPayload) => {
+  if (!io) {
+    console.warn('⚠️ Socket.IO not initialized');
+    return;
+  }
+
+  io.to(String(userId)).emit('notification', notificationPayload);
 };

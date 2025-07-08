@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { connectSocket, disconnectSocket, getSocket } from '../utils/socket';
+import { connectSocket, getSocket } from './socket';
 
-const useSocket = (userId, onUserUpdate) => {
+const useSocket = (userId, onUserUpdate, onNotification) => {
   const [socketId, setSocketId] = useState(null);
 
   useEffect(() => {
@@ -13,21 +13,19 @@ const useSocket = (userId, onUserUpdate) => {
       socket = connectSocket(userId);
     }
 
+    const handleUserUpdated = (data) => onUserUpdate?.(data);
+    const handleNotification = (data) => onNotification?.(data);
+
     socket.on('connect', () => {
-      // console.log('✅ Socket connected:', socket.id);
       setSocketId(socket.id);
     });
 
-    socket.on('userUpdated', (updatedUserData) => {
-      console.log('📩 User data updated:', updatedUserData);
-      if (onUserUpdate) {
-        onUserUpdate(updatedUserData);
-      }
-    });
+    socket.on('userUpdated', handleUserUpdated);
+    socket.on('notification', handleNotification);
 
     return () => {
-      // 🔥 Only disconnect when the component fully unmounts, NOT on re-renders
-      // console.log('🔌 Cleanup function called, but socket stays connected');
+      socket.off('userUpdated', handleUserUpdated);
+      socket.off('notification', handleNotification);
     };
   }, [userId]);
 

@@ -1,6 +1,7 @@
 import Todos from '../models/todo.js';
 import mongoose from 'mongoose';
-import { getAllUsersHelper, isValidObjectId } from '../helper/index.js';
+import { getAllUsersHelper, isValidObjectId } from '../helper/indexHelper.js';
+import { createNotification } from '../helper/notificationHelper.js';
 
 export const getTodosDashboardData = async (req, res, next) => {
   try {
@@ -133,6 +134,28 @@ export const createTodo = async (req, res, next) => {
         ? checklist.map((entry) => ({ title: entry.value }))
         : [],
     });
+
+    if (assignedTo.length) {
+      const notificationPromises = assignedTo.map((assignee) => {
+        const notificationData = {
+          title: 'New Task Assigned',
+          message: `You have been assigned a new task: "${name}".`,
+          type: 'info',
+          targetUser: assignee,
+          link: `/todos`,
+          metadata: {
+            taskId: todo._id,
+            assignedBy: userId,
+          },
+          isBroadcast: false,
+          createdBy: userId,
+        };
+
+        return createNotification(notificationData);
+      });
+
+      await Promise.all(notificationPromises);
+    }
 
     res.status(201).json({ status: 'success', todo });
   } catch (err) {

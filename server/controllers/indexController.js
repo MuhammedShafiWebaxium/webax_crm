@@ -7,7 +7,7 @@ import { Types } from 'mongoose';
 import {
   getLeadsDashboardData,
   getTodoDashboardData,
-} from '../helper/index.js';
+} from '../helper/indexHelper.js';
 import { startOfDay, endOfDay, subDays, format } from 'date-fns';
 
 export const loginUser = async (req, res, next) => {
@@ -47,13 +47,13 @@ export const loginUser = async (req, res, next) => {
 
     const { password: _, ...userWithoutPassword } = user.toObject();
 
+    const isProd = process.env.NODE_ENV === 'production';
+
     res
       .cookie('access__', token, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        // secure: false, // Set to true in production over HTTPS
-        // sameSite: 'lax', // or 'none' if secure + cross-site
+        secure: isProd ? true : false,
+        sameSite: isProd ? 'none' : 'lax',
       })
       .status(200)
       .json({ status: 'success', user: { ...userWithoutPassword } });

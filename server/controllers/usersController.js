@@ -7,7 +7,7 @@ import {
   getCompanyHelper,
   getUserHelper,
   isValidObjectId,
-} from '../helper/index.js';
+} from '../helper/indexHelper.js';
 
 // List all users
 export const getAllUsers = async (req, res, next) => {

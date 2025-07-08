@@ -7,8 +7,10 @@ import {
   getUserHelper,
   isValidDate,
   isValidObjectId,
-} from '../helper/index.js';
+} from '../helper/indexHelper.js';
 import Settings from '../models/settings.js';
+import { format } from 'date-fns';
+import { createNotification } from '../helper/notificationHelper.js';
 
 // List all leads
 export const getAllLeads = async (req, res, next) => {
@@ -113,7 +115,9 @@ export const createLead = async (req, res, next) => {
         `The lead already exists${isLeadExist.deleted ? ` (Deleted).` : '.'}`
       );
 
-    if (salesRepresentative && canAssign) {
+    const isSelfAssign = String(salesRepresentative) === String(userId);
+
+    if ((salesRepresentative && canAssign) || !isSelfAssign) {
       const salesRepRecord = await getUserHelper(salesRepresentative, company, {
         name: 1,
         email: 1,
@@ -153,7 +157,7 @@ export const createLead = async (req, res, next) => {
     const status = companyRecord.settings?.lead?.defaultStatus || 'New';
     const stage = companyRecord.settings?.lead?.defaultStage || 'Assigned';
 
-    await Leads.create({
+    const newLead = await Leads.create({
       ...body,
       company,
       leadId,
@@ -163,6 +167,28 @@ export const createLead = async (req, res, next) => {
       'leadSource.source': leadSource,
       createdBy: userId,
     });
+
+    if (!isSelfAssign) {
+      const targetUser = staff || userId;
+
+      const notificationData = {
+        title: 'New Lead Assigned',
+        message: `You have been assigned a new lead: ${
+          newLead.name || 'Unnamed Lead'
+        }.`,
+        type: 'info',
+        targetUser,
+        link: `/leads/${newLead._id}/followup`,
+        metadata: {
+          leadId: newLead._id,
+          assignedBy: userId,
+        },
+        isBroadcast: false,
+        createdBy: userId,
+      };
+
+      await createNotification(notificationData);
+    }
 
     res.status(201).json({ status: 'success' });
   } catch (err) {
@@ -509,6 +535,38 @@ export const followupLead = async (req, res, next) => {
     lead.nextFollowup = nextFollowup;
 
     await lead.save();
+
+    if (nextFollowup) {
+      const targetUser = lead?.assigned?.staff || userId;
+
+      const followupTime = new Date(nextFollowup);
+      const now = new Date();
+      let scheduleTime = new Date(followupTime.getTime() - 5 * 60 * 1000);
+
+      if (scheduleTime <= now) {
+        scheduleTime = followupTime;
+      }
+
+      const notificationData = {
+        scheduleTime,
+        title: 'Upcoming Lead Follow-up',
+        message: `You have an upcoming follow-up with ${
+          lead.name || 'a lead'
+        } scheduled at ${format(followupTime, 'p')}.`,
+        type: 'info',
+        targetUser,
+        link: `/leads/${newLead._id}/followup`,
+        metadata: {
+          leadId: lead._id,
+          followupDate: nextFollowup,
+        },
+        isBroadcast: false,
+        createdBy: userId,
+      };
+
+      await createNotification(notificationData);
+    }
+
     res.status(201).json({ status: 'success', lead });
   } catch (err) {
     next(err);

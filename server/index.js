@@ -16,6 +16,8 @@ import leadsRouter from './routes/leadsRoute.js';
 import todosRouter from './routes/todosRoute.js';
 import settingsRouter from './routes/settingsRoute.js';
 import ticketsRouter from './routes/ticketsRoute.js';
+import notificationsRouter from './routes/notificationRoute.js';
+import { registerNotificationCron } from './cron/notification.cron.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -32,8 +34,12 @@ const startServer = async () => {
     // Do NOT stop the server; app can still run without Socket.io
   }
 
-  server.listen(4000, () => {
-    console.log('🚀 Server is running on port 4000');
+  registerNotificationCron(); // ✅ Start your cron job after DB and socket are ready
+
+  const PORT = process.env.PORT;  
+
+  server.listen(PORT, () => {
+    console.log(`🚀 Server is running on port ${PORT}`);
   });
 };
 
@@ -54,6 +60,7 @@ app.use('/api/leads', leadsRouter);
 app.use('/api/todos', todosRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/tickets', ticketsRouter);
+app.use('/api/notifications', notificationsRouter);
 
 // 🟢 Error Handler Middleware (Keep at the End)
 app.use(errorHandler);

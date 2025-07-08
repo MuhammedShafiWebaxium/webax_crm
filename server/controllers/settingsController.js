@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { isValidObjectId } from '../helper/index.js';
+import { isValidObjectId } from '../helper/indexHelper.js';
 import Settings from '../models/settings.js';
 import Roles from '../models/roles.js';
 import Users from '../models/user.js';
