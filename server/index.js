@@ -1,7 +1,7 @@
 import express from 'express';
 import http from 'http';
 import cookieParser from 'cookie-parser';
-import logger from 'morgan';
+// import logger from 'morgan';
 import connectDB from './config/db.js';
 import './config/index.js';
 
@@ -47,7 +47,7 @@ const startServer = async () => {
 startServer();
 
 // 🟢 Middlewares
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(configureCors());
