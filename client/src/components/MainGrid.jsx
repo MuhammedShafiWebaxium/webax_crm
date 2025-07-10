@@ -746,7 +746,7 @@ const MainGrid = () => {
       {/* cards */}
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         Overview
-      </Typography>{console.log(cardData)}
+      </Typography>
       <Grid
         container
         spacing={2}
@@ -758,8 +758,6 @@ const MainGrid = () => {
             <StatCard {...card} />
           </Grid>
         ))}
-        {console.log(currentUser?.company?.settings?.adAccounts)}
-        {console.log(currentUser?.company?.settings)}
         {!currentUser?.company?.settings?.adAccounts?.length && (
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
             <HighlightedCard
