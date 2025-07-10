@@ -9,6 +9,7 @@ import {
   isValidObjectId,
 } from '../helper/indexHelper.js';
 import Settings from '../models/settings.js';
+import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import { format } from 'date-fns';
 import { createNotification } from '../helper/notificationHelper.js';
 
@@ -537,22 +538,28 @@ export const followupLead = async (req, res, next) => {
     await lead.save();
 
     if (nextFollowup) {
+      const IST_TIMEZONE = 'Asia/Kolkata';
       const targetUser = lead?.assigned?.staff || userId;
 
-      const followupTime = new Date(nextFollowup);
-      const now = new Date();
-      let scheduleTime = new Date(followupTime.getTime() - 5 * 60 * 1000);
+      // Convert nextFollowup to a Date in IST
+      const followupTimeIST = utcToZonedTime(
+        new Date(nextFollowup),
+        IST_TIMEZONE
+      );
+      const nowIST = utcToZonedTime(new Date(), IST_TIMEZONE);
 
-      if (scheduleTime <= now) {
-        scheduleTime = followupTime;
+      let scheduleTimeIST = new Date(followupTimeIST.getTime() - 5 * 60 * 1000);
+
+      if (scheduleTimeIST <= nowIST) {
+        scheduleTimeIST = followupTimeIST;
       }
 
       const notificationData = {
-        scheduleTime,
+        scheduleTime: zonedTimeToUtc(scheduleTimeIST, IST_TIMEZONE), // store as UTC
         title: 'Upcoming Lead Follow-up',
         message: `You have an upcoming follow-up with ${
           lead.name || 'a lead'
-        } scheduled at ${format(followupTime, 'p')}.`,
+        } scheduled at ${format(followupTimeIST, 'p')}.`,
         type: 'info',
         targetUser,
         link: `/leads/${lead._id}/followup`,
