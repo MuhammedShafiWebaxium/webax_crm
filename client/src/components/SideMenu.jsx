@@ -96,7 +96,7 @@ export default function SideMenu({ collapse }) {
       >
         <Avatar
           alt={currentUser?.userName?.firstName || 'User'}
-          src="/static/images/avatar/7.jpg"
+          // src="/static/images/avatar/7.jpg"
           sx={{ width: 36, height: 36 }}
         />
         {!isCollapsed && (
