@@ -9,7 +9,6 @@ import {
   isValidObjectId,
 } from '../helper/indexHelper.js';
 import Settings from '../models/settings.js';
-import { toDate } from 'date-fns-tz';
 import { format } from 'date-fns';
 import { createNotification } from '../helper/notificationHelper.js';
 
@@ -538,34 +537,22 @@ export const followupLead = async (req, res, next) => {
     await lead.save();
 
     if (nextFollowup) {
-      const IST_TIMEZONE = 'Asia/Kolkata';
       const targetUser = lead?.assigned?.staff || userId;
 
-      // Parse nextFollowup and current time in IST
-      const followupTimeIST = toDate(new Date(nextFollowup), {
-        timeZone: IST_TIMEZONE,
-      });
-      const nowIST = toDate(new Date(), {
-        timeZone: IST_TIMEZONE,
-      });
+      const followupTime = new Date(nextFollowup);
+      const now = new Date();
+      let scheduleTime = new Date(followupTime.getTime() - 5 * 60 * 1000);
 
-      // Schedule 5 minutes before followup time, or fallback to exact time if overdue
-      const FIVE_MINUTES = 5 * 60 * 1000;
-      let scheduleTimeIST = new Date(followupTimeIST.getTime() - FIVE_MINUTES);
-
-      if (scheduleTimeIST <= nowIST) {
-        scheduleTimeIST = followupTimeIST;
+      if (scheduleTime <= now) {
+        scheduleTime = followupTime;
       }
 
-      // Convert IST schedule time to UTC
-      const scheduleTimeUTC = toDate(scheduleTimeIST, { timeZone: 'UTC' });
-
       const notificationData = {
-        scheduleTime: scheduleTimeUTC,
+        scheduleTime,
         title: 'Upcoming Lead Follow-up',
         message: `You have an upcoming follow-up with ${
           lead.name || 'a lead'
-        } scheduled at ${format(followupTimeIST, 'p')}.`,
+        } scheduled at ${format(followupTime, 'p')}.`,
         type: 'info',
         targetUser,
         link: `/leads/${lead._id}/followup`,

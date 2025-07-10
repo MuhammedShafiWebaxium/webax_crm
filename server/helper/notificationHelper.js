@@ -2,7 +2,6 @@ import Notification from '../models/notification.js';
 import NotificationDelivery from '../models/notificationDelivery.js';
 import User from '../models/user.js';
 import { emitNotification } from '../sockets/socket.js';
-import { toDate } from 'date-fns-tz';
 
 export const startNotificationCron = async () => {
   try {
@@ -15,7 +14,7 @@ export const startNotificationCron = async () => {
       scheduledFor: { $gte: twoMinutesAgo, $lte: now },
       deleted: false,
       hasBeenSent: false,
-    });
+    })
 
     for (const notification of notifications) {
       let usersToNotify = [];
@@ -92,16 +91,8 @@ export const createNotification = async (data) => {
   } = data;
 
   try {
-    const IST_TIMEZONE = 'Asia/Kolkata';
     const now = new Date();
-
-    // If no scheduleTime is provided, use current IST time and convert to UTC
-    const scheduleTimeIST = scheduleTime
-      ? scheduleTime
-      : toDate(now, { timeZone: IST_TIMEZONE });
-
-    // Always store in UTC format
-    const scheduledFor = toDate(scheduleTimeIST, { timeZone: 'UTC' });
+    const scheduledFor = scheduleTime || now;
 
     const notification = await Notification.create({
       title,
