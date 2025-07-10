@@ -3,7 +3,7 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import MenuButton from '../MenuButton';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
-import { Box, Divider, CircularProgress, Stack } from '@mui/material';
+import { Box, Divider, CircularProgress, Stack, Chip } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton, Tooltip } from '@mui/material';
@@ -21,6 +21,33 @@ import {
   setNotifications,
 } from '../../redux/notificationSlice';
 import { useNavigate } from 'react-router-dom';
+
+import { format, isToday, isYesterday, parseISO } from 'date-fns';
+
+export function formatNotificationTime(dateStr) {
+  const date = typeof dateStr === 'string' ? parseISO(dateStr) : dateStr;
+
+  if (isToday(date)) {
+    return `Today, ${format(date, 'hh:mm a')}`;
+  } else if (isYesterday(date)) {
+    return `Yesterday, ${format(date, 'hh:mm a')}`;
+  } else {
+    return format(date, 'd MMM, yyyy');
+  }
+}
+
+const getNotificationChipProps = (type) => {
+  switch (type) {
+    case 'Upcoming Lead Follow-up':
+      return { label: 'Follow-Up', color: 'primary' };
+    case 'New Lead Assigned':
+      return { label: 'Lead Assigned', color: 'success' };
+    case 'New Task Assigned':
+      return { label: 'Task Assigned', color: 'error' };
+    default:
+      return { label: 'Notification', color: 'default' };
+  }
+};
 
 export default function Notifications() {
   const dispatch = useDispatch();
@@ -264,6 +291,26 @@ export default function Notifications() {
                   >
                     {item.message}
                   </Typography>
+
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mt={0.5}
+                  >
+                    <Typography
+                      variant="caption"
+                      sx={{ fontSize: 11, color: 'text.disabled' }}
+                    >
+                      {formatNotificationTime(item.createdAt)}
+                    </Typography>
+
+                    <Chip
+                      size="small"
+                      {...getNotificationChipProps(item.title)}
+                      sx={{ fontSize: 10, height: 20 }}
+                    />
+                  </Stack>
                 </Box>
               ))
             ) : (

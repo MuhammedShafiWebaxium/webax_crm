@@ -555,7 +555,7 @@ export const followupLead = async (req, res, next) => {
         } scheduled at ${format(followupTime, 'p')}.`,
         type: 'info',
         targetUser,
-        link: `/leads/${newLead._id}/followup`,
+        link: `/leads/${lead._id}/followup`,
         metadata: {
           leadId: lead._id,
           followupDate: nextFollowup,
