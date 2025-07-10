@@ -757,7 +757,9 @@ const MainGrid = () => {
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
             <StatCard {...card} />
           </Grid>
-        ))}{console.log(currentUser?.company?.settings?.adAccounts?.length)}
+        ))}
+        {console.log(currentUser?.company?.settings?.adAccounts)}
+        {console.log(currentUser?.company?.settings)}
         {!currentUser?.company?.settings?.adAccounts?.length && (
           <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
             <HighlightedCard
