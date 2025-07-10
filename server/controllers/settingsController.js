@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
-import { isValidObjectId } from '../helper/indexHelper.js';
+import { formateDashboardData, isValidObjectId } from '../helper/indexHelper.js';
 import Settings from '../models/settings.js';
 import Roles from '../models/roles.js';
 import Users from '../models/user.js';
+import Leads from '../models/lead.js';
 import Companies from '../models/company.js';
+import { endOfDay, format, startOfDay, subDays } from 'date-fns';
 
 export const getAllRoles = async (req, res, next) => {
   try {
@@ -266,7 +268,97 @@ export const getAllIntegrations = async (req, res, next) => {
       { adAccounts: 1 }
     ).populate('adAccounts.addedBy', 'name');
 
-    res.status(200).json({ status: 'success', settings });
+    let fbLeadsData = null;
+    let formattedFBLeadsData = null;
+
+    if (settings.adAccounts.length) {
+      // Set the date range for today
+      const now = new Date();
+      const startToday = startOfDay(now);
+      const endToday = endOfDay(now);
+
+      // Set the date range for the last 29 days
+      const lastMonthStart = startOfDay(subDays(now, 29));
+
+      // Set the date range for the previous month
+      const previousMonthStart = startOfDay(subDays(now, 56));
+
+      const dates = [];
+      let current = lastMonthStart;
+
+      while (current <= startToday) {
+        dates.push(format(current, 'MMM d'));
+        current = new Date(current.getTime() + 24 * 60 * 60 * 1000); // add 1 day
+      }
+
+      fbLeadsData = await Leads.aggregate([
+        {
+          $match: {
+            company,
+            deleted: false,
+          },
+        },
+        {
+          $facet: {
+            lastMonthFBLeads: [
+              {
+                $match: {
+                  'leadSource.sourceLeadId': { $exists: true },
+                  createdAt: {
+                    $gte: lastMonthStart,
+                    $lt: endToday,
+                  },
+                },
+              },
+              {
+                $group: {
+                  _id: {
+                    $dateToString: {
+                      format: '%Y-%m-%d',
+                      date: '$createdAt',
+                      timezone: 'Asia/Kolkata',
+                    },
+                  },
+                  count: { $sum: 1 },
+                },
+              },
+              {
+                $sort: { _id: 1 },
+              },
+              {
+                $project: {
+                  date: '$_id',
+                  count: 1,
+                },
+              },
+            ],
+            previousMonthFBLeads: [
+              {
+                $match: {
+                  'leadSource.sourceLeadId': { $exists: true },
+                  createdAt: {
+                    $gte: previousMonthStart,
+                    $lte: lastMonthStart,
+                  },
+                },
+              },
+              {
+                $count: 'count',
+              },
+            ],
+          },
+        },
+      ]);
+
+      formattedFBLeadsData = formateDashboardData(
+        fbLeadsData[0]?.lastMonthFBLeads || [],
+        dates
+      );
+    }
+
+    res
+      .status(200)
+      .json({ status: 'success', settings, fbLeadsData, formattedFBLeadsData });
   } catch (err) {
     next(err);
   }
@@ -356,7 +448,7 @@ export const deleteIntegration = async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      message: 'Role deactivated successfully',
+      message: 'Ad account deactivated successfully',
       settings,
     });
   } catch (err) {
@@ -393,7 +485,7 @@ export const activateIntegration = async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      message: 'Role activated successfully',
+      message: 'Ad account activated successfully',
       settings,
     });
   } catch (err) {

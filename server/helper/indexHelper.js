@@ -15,7 +15,7 @@ export const getAllCompaniesHelper = async () => {
   try {
     const companies = await Companies.find({ status: 'Active' }).populate({
       path: 'roles',
-      select: 'name'
+      select: 'name',
     });
     return companies;
   } catch (err) {
@@ -159,7 +159,7 @@ export const getAllTodos = async (company, user) => {
   }
 };
 
-const formateDashboardData = (doc, dates) => {
+export const formateDashboardData = (doc, dates) => {
   let index = 0;
   return dates.map((date) => {
     const docDate = doc[index]?.date
@@ -183,17 +183,65 @@ export const getLeadsDashboardData = async (
   lastMonthStart,
   previousMonthStart,
   dates,
-  pipeline
+  pipeline,
+  isAdAccountSetup
 ) => {
   try {
-    // Aggregate data for leads from last month and previous month
+    let adAccountFacets = {};
+
+    if (isAdAccountSetup) {
+      adAccountFacets = {
+        lastMonthFBLeads: [
+          {
+            $match: {
+              'leadSource.sourceLeadId': { $exists: true },
+              createdAt: {
+                $gte: lastMonthStart,
+                $lt: endToday,
+              },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: '%Y-%m-%d',
+                  date: '$createdAt',
+                  timezone: 'Asia/Kolkata',
+                },
+              },
+              count: { $sum: 1 },
+            },
+          },
+          {
+            $sort: { _id: 1 },
+          },
+          {
+            $project: {
+              date: '$_id',
+              count: 1,
+            },
+          },
+        ],
+        previousMonthFBLeads: [
+          {
+            $match: {
+              'leadSource.sourceLeadId': { $exists: true },
+              createdAt: {
+                $gte: previousMonthStart,
+                $lte: lastMonthStart,
+              },
+            },
+          },
+          {
+            $count: 'count',
+          },
+        ],
+      };
+    }
+
     const data = await Leads.aggregate([
       ...pipeline,
-      {
-        $match: {
-          deleted: false,
-        },
-      },
       {
         $facet: {
           lastMonthLeads: [
@@ -217,9 +265,7 @@ export const getLeadsDashboardData = async (
                 count: { $sum: 1 },
               },
             },
-            {
-              $sort: { _id: 1 },
-            },
+            { $sort: { _id: 1 } },
             {
               $project: {
                 date: '$_id',
@@ -236,9 +282,7 @@ export const getLeadsDashboardData = async (
                 },
               },
             },
-            {
-              $count: 'count',
-            },
+            { $count: 'count' },
           ],
           todaysLeads: [
             {
@@ -277,41 +321,31 @@ export const getLeadsDashboardData = async (
                 preserveNullAndEmptyArrays: true,
               },
             },
-            {
-              $sort: { createdAt: -1 },
-            },
+            { $sort: { createdAt: -1 } },
           ],
           yesterdaysLeads: [
             {
-              $addFields: {
-                createdAtLocal: {
-                  $dateToString: {
-                    format: '%Y-%m-%d',
-                    date: '$createdAt',
-                    timezone: 'Asia/Kolkata',
-                  },
+              $match: {
+                $expr: {
+                  $eq: [
+                    {
+                      $dateToString: {
+                        format: '%Y-%m-%d',
+                        date: '$createdAt',
+                        timezone: 'Asia/Kolkata',
+                      },
+                    },
+                    yesterday,
+                  ],
                 },
               },
             },
-            {
-              $match: {
-                createdAtLocal: yesterday,
-              },
-            },
-            {
-              $count: 'count',
-            },
+            { $count: 'count' },
           ],
           recentAdmissions: [
-            {
-              $match: { eligibility: 'Eligible' },
-            },
-            {
-              $sort: { convertedDate: -1 },
-            },
-            {
-              $limit: 20,
-            },
+            { $match: { eligibility: 'Eligible' } },
+            { $sort: { convertedDate: -1 } },
+            { $limit: 20 },
             {
               $lookup: {
                 from: 'users',
@@ -382,9 +416,7 @@ export const getLeadsDashboardData = async (
                 },
               },
             },
-            {
-              $sort: { date: 1 },
-            },
+            { $sort: { date: 1 } },
           ],
           previousMonthSources: [
             {
@@ -404,9 +436,7 @@ export const getLeadsDashboardData = async (
                 ],
               },
             },
-            {
-              $count: 'count',
-            },
+            { $count: 'count' },
           ],
           lastMonthConversions: [
             {
@@ -429,9 +459,7 @@ export const getLeadsDashboardData = async (
                 count: { $sum: 1 },
               },
             },
-            {
-              $sort: { _id: 1 },
-            },
+            { $sort: { _id: 1 } },
             {
               $project: {
                 date: '$_id',
@@ -448,13 +476,14 @@ export const getLeadsDashboardData = async (
                 },
               },
             },
-            {
-              $count: 'count',
-            },
+            { $count: 'count' },
           ],
+          ...adAccountFacets,
         },
       },
     ]);
+
+    let formattedFBLeadsData = null;
 
     const formattedLeadsData = formateDashboardData(
       data[0]?.lastMonthLeads || [],
@@ -466,17 +495,25 @@ export const getLeadsDashboardData = async (
     );
     const formattedSource = (data[0]?.lastMonthSources || []).map((entry) => ({
       date: entry.date ? format(parseISO(entry.date), 'MMM d') : '',
-      'Facebook excel': 0,
+      Facebook: 0,
       Google: 0,
       Youtube: 0,
       ...entry.sources,
     }));
+
+    if (isAdAccountSetup) {
+      formattedFBLeadsData = formateDashboardData(
+        data[0]?.lastMonthFBLeads || [],
+        dates
+      );
+    }
 
     return {
       ...data[0],
       formattedLeadsData,
       formattedSource,
       formattedConversionData,
+      formattedFBLeadsData,
     };
   } catch (err) {
     console.log(err);

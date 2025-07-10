@@ -523,6 +523,42 @@ const MainGrid = () => {
           },
         ];
 
+        if (currentUser?.company?.settings?.adAccounts?.length) {
+          let thisMonthFBLeads = 0;
+          let previousMonthFBLeads =
+            data?.leadsData?.previousMonthFBLeads[0]?.count || 0;
+          const formattedFBLeadsData = [];
+          const formattedFBLeadsDays =
+            data?.leadsData?.formattedFBLeadsData?.map((item) => {
+              thisMonthFBLeads += item.count;
+              formattedFBLeadsData.push(item?.count);
+
+              return item.date;
+            });
+
+          let fBLeadsPercentageChange = null;
+
+          if (previousMonthFBLeads === 0) {
+            fBLeadsPercentageChange = thisMonthFBLeads === 0 ? 0 : 100; // or handle however you want
+          } else {
+            fBLeadsPercentageChange = Math.round(
+              ((thisMonthFBLeads - previousMonthFBLeads) /
+                previousMonthFBLeads) *
+                100
+            );
+          }
+
+          formattedData.push({
+            title: 'FB Leads',
+            value: NumberFormatter(thisMonthFBLeads),
+            interval: `Last ${formattedFBLeadsData?.length} days`,
+            data: formattedFBLeadsData,
+            days: formattedFBLeadsDays,
+            trendValue: percentageFormatter(fBLeadsPercentageChange),
+            trend: getType(fBLeadsPercentageChange),
+          });
+        }
+
         let unAssignedCount = 0;
 
         const formattedTodaysLeads = data?.leadsData?.todaysLeads?.map(
@@ -568,13 +604,13 @@ const MainGrid = () => {
           data?.leadsData?.previousMonthSources[0]?.count || 0;
 
         data?.leadsData?.formattedSource?.forEach((source) => {
-          formattedFacebookData.push(source['Facebook excel']);
+          formattedFacebookData.push(source['Facebook']);
           formattedGoogleData.push(source['Google']);
           formattedYoutubeData.push(source['Youtube']);
 
           formattedSourceDays.push(source.date);
           totalSourceLeads +=
-            source['Facebook excel'] + source['Google'] + source['Youtube'];
+            source['Facebook'] + source['Google'] + source['Youtube'];
         });
 
         let sourcePercentageChange = null;
@@ -722,17 +758,19 @@ const MainGrid = () => {
             <StatCard {...card} />
           </Grid>
         ))}
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <HighlightedCard
-            title={'Connect Facebook Leads'}
-            buttonName={'Setup Now'}
-            icon={<InsightsRoundedIcon />}
-            onClick={handleClickHighlightedCard}
-            description={
-              'Set up Facebook API to start receiving leads directly from your ad campaigns.'
-            }
-          />
-        </Grid>
+        {!currentUser?.company?.settings?.adAccounts?.length && (
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+            <HighlightedCard
+              title={'Connect Facebook Leads'}
+              buttonName={'Setup Now'}
+              icon={<InsightsRoundedIcon />}
+              onClick={handleClickHighlightedCard}
+              description={
+                'Set up Facebook API to start receiving leads directly from your ad campaigns.'
+              }
+            />
+          </Grid>
+        )}
         <Grid size={{ xs: 12, lg: 6 }}>
           <CustomLineChart
             title={'Sources'}

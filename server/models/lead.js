@@ -61,6 +61,7 @@ const leadSchema = new Schema(
       sourceLeadId: {
         type: String,
         trim: true,
+        index: true,
       },
       accountInfo: {
         accountId: {
@@ -198,5 +199,14 @@ const leadSchema = new Schema(
   },
   { timestamps: true }
 );
+
+leadSchema.index({ createdAt: 1 });
+leadSchema.index({ deleted: 1, createdAt: 1 });
+leadSchema.index({ convertedDate: 1 });
+leadSchema.index({ eligibility: 1, convertedDate: -1 });
+leadSchema.index({ 'leadSource.sourceLeadId': 1, createdAt: 1 });
+leadSchema.index({ 'leadSource.source': 1, createdAt: 1 });
+leadSchema.index({ 'assigned.staff': 1 });
+leadSchema.index({ 'assigned.assignedBy': 1 });
 
 export default model('Lead', leadSchema);

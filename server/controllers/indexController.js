@@ -1,9 +1,7 @@
 import bcrypt from 'bcryptjs';
 import Users from '../models/user.js';
 import jwt from '../utils/jwt.js';
-import Leads from '../models/lead.js';
-import Todos from '../models/todo.js';
-import { Types } from 'mongoose';
+import Settings from '../models/settings.js';
 import {
   getLeadsDashboardData,
   getTodoDashboardData,
@@ -113,6 +111,14 @@ export const getDashboard = async (req, res, next) => {
       },
     ];
 
+    let isAdAccountSetup = false;
+
+    const setting = await Settings.findOne({ company }).lean();
+
+    if (setting?.adAccounts?.length) {
+      isAdAccountSetup = true;
+    }
+
     const leadsData = await getLeadsDashboardData(
       startToday,
       endToday,
@@ -122,7 +128,8 @@ export const getDashboard = async (req, res, next) => {
       lastMonthStart,
       previousMonthStart,
       dates,
-      leadsPipeline
+      leadsPipeline,
+      isAdAccountSetup
     );
 
     const todosData = await getTodoDashboardData(

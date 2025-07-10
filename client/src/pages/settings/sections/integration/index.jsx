@@ -60,6 +60,16 @@ const initialColumns = [
   { field: 'accessToken', headerName: 'Access Token', flex: 1 },
 ];
 
+const NumberFormatter = (number) => number.toLocaleString();
+
+const getType = (number) => {
+  return number === 0 ? 'neutral' : number > 0 ? 'up' : 'down';
+};
+
+const percentageFormatter = (number) => {
+  return number > 0 ? `+${number}%` : `${number}%`;
+};
+
 const IntegrationsSetting = () => {
   const theme = useTheme();
 
@@ -92,8 +102,8 @@ const IntegrationsSetting = () => {
   const handleClickHighlightedCard = (title) => {
     if (title === 'Connect Facebook Leads') {
       handleNavigate('/settings/integration/ad-account/create-new');
-    }else {
-      alert('Work in progress!')
+    } else {
+      alert('Work in progress!');
     }
   };
 
@@ -126,7 +136,7 @@ const IntegrationsSetting = () => {
     }
   };
 
-  const updateCardData = () => {
+  const updateCardData = (data) => {
     setHighlightCardData((prev) =>
       prev.map((entry) => {
         if (entry.title === 'Connect Facebook Leads') {
@@ -137,6 +147,26 @@ const IntegrationsSetting = () => {
       })
     );
 
+    let thisMonthFBLeads = 0;
+    let previousMonthFBLeads = data?.fbLeadsData[0]?.previousMonthFBLeads[0]?.count || 0;
+    const formattedFBLeadsData = [];
+    const formattedFBLeadsDays = data?.formattedFBLeadsData?.map((item) => {
+      thisMonthFBLeads += item.count;
+      formattedFBLeadsData.push(item?.count);
+
+      return item.date;
+    });
+
+    let fBLeadsPercentageChange = null;
+
+    if (previousMonthFBLeads === 0) {
+      fBLeadsPercentageChange = thisMonthFBLeads === 0 ? 0 : 100; // or handle however you want
+    } else {
+      fBLeadsPercentageChange = Math.round(
+        ((thisMonthFBLeads - previousMonthFBLeads) / previousMonthFBLeads) * 100
+      );
+    }
+
     setCardData([
       {
         title: (
@@ -145,19 +175,12 @@ const IntegrationsSetting = () => {
             Leads
           </Box>
         ),
-        value: '15K',
-        interval: 'Last 30 days',
-        trend: 'up',
-        data: [
-          200, 24, 220, 260, 240, 380, 100, 240, 280, 240, 300, 340, 320, 360,
-          340, 380, 360, 400, 380, 420, 400, 640, 340, 460, 440, 480, 460, 600,
-          880, 920,
-        ],
-        days: [
-          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-          21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-        ],
-        trendValue: '+25%',
+        value: NumberFormatter(thisMonthFBLeads),
+        interval: `Last ${formattedFBLeadsData?.length} days`,
+        data: formattedFBLeadsData,
+        days: formattedFBLeadsDays,
+        trendValue: percentageFormatter(fBLeadsPercentageChange),
+        trend: getType(fBLeadsPercentageChange),
       },
     ]);
   };
@@ -185,7 +208,7 @@ const IntegrationsSetting = () => {
         setAdAccounts(formattedAdAccounts);
 
         if (formattedAdAccounts?.length || !canCreate) {
-          updateCardData();
+          updateCardData(data);
         }
       } catch (error) {
         handleFormError(error, null, dispatch, navigate);

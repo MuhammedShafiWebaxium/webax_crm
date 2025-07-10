@@ -1,7 +1,6 @@
 import express from 'express';
 import http from 'http';
 import cookieParser from 'cookie-parser';
-// import logger from 'morgan';
 import connectDB from './config/db.js';
 import './config/index.js';
 
@@ -25,6 +24,12 @@ const server = http.createServer(app);
 const startServer = async () => {
   await connectDB(); // Ensure DB is connected before starting the server
 
+  // 🟢 Dev-only logging
+  if (process.env.NODE_ENV === 'development') {
+    const { default: morgan } = await import('morgan');
+    app.use(morgan('dev'));
+  }
+
   try {
     const io = initializeSocket(server); // Start Socket.io
     app.set('notifyUserUpdate', notifyUserUpdate);
@@ -36,7 +41,7 @@ const startServer = async () => {
 
   registerNotificationCron(); // ✅ Start your cron job after DB and socket are ready
 
-  const PORT = process.env.PORT;  
+  const PORT = process.env.PORT;
 
   server.listen(PORT, () => {
     console.log(`🚀 Server is running on port ${PORT}`);
@@ -47,7 +52,6 @@ const startServer = async () => {
 startServer();
 
 // 🟢 Middlewares
-// app.use(logger('dev'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(configureCors());
