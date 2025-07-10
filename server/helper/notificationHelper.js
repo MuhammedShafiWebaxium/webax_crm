@@ -2,7 +2,7 @@ import Notification from '../models/notification.js';
 import NotificationDelivery from '../models/notificationDelivery.js';
 import User from '../models/user.js';
 import { emitNotification } from '../sockets/socket.js';
-import { zonedTimeToUtc } from 'date-fns-tz';
+import { toDate } from 'date-fns-tz';
 
 export const startNotificationCron = async () => {
   try {
@@ -97,7 +97,7 @@ export const createNotification = async (data) => {
     const now = new Date();
     const scheduledFor = scheduleTime
       ? scheduleTime
-      : zonedTimeToUtc(now, IST_TIMEZONE);
+      : toDate(now, { timeZone: IST_TIMEZONE });
 
     const notification = await Notification.create({
       title,
