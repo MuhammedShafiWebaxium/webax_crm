@@ -258,7 +258,7 @@ export default function LogIn() {
           >
             Log in with Facebook
           </Button>
-          <Typography sx={{ textAlign: 'center' }}>
+          {/* <Typography sx={{ textAlign: 'center' }}>
             Don&apos;t have an account?{' '}
             <Link
               href="/material-ui/getting-started/templates/sign-in/"
@@ -267,7 +267,7 @@ export default function LogIn() {
             >
               Sign up
             </Link>
-          </Typography>
+          </Typography> */}
         </Box>
       </Card>
     </LogInContainer>
