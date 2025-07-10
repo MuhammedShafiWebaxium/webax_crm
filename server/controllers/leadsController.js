@@ -541,22 +541,27 @@ export const followupLead = async (req, res, next) => {
       const IST_TIMEZONE = 'Asia/Kolkata';
       const targetUser = lead?.assigned?.staff || userId;
 
-      // Convert nextFollowup and now to IST timezone
+      // Parse nextFollowup and current time in IST
       const followupTimeIST = toDate(new Date(nextFollowup), {
         timeZone: IST_TIMEZONE,
       });
-      const nowIST = toDate(new Date(), { timeZone: IST_TIMEZONE });
+      const nowIST = toDate(new Date(), {
+        timeZone: IST_TIMEZONE,
+      });
 
-      // Subtract 5 minutes from followup time
-      let scheduleTimeIST = new Date(followupTimeIST.getTime() - 5 * 60 * 1000);
+      // Schedule 5 minutes before followup time, or fallback to exact time if overdue
+      const FIVE_MINUTES = 5 * 60 * 1000;
+      let scheduleTimeIST = new Date(followupTimeIST.getTime() - FIVE_MINUTES);
 
-      // Adjust if schedule is earlier than now
       if (scheduleTimeIST <= nowIST) {
         scheduleTimeIST = followupTimeIST;
       }
 
+      // Convert IST schedule time to UTC
+      const scheduleTimeUTC = toDate(scheduleTimeIST, { timeZone: 'UTC' });
+
       const notificationData = {
-        scheduleTime: toDate(scheduleTimeIST, { timeZone: 'UTC' }), // store in UTC format
+        scheduleTime: scheduleTimeUTC,
         title: 'Upcoming Lead Follow-up',
         message: `You have an upcoming follow-up with ${
           lead.name || 'a lead'

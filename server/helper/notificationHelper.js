@@ -93,11 +93,15 @@ export const createNotification = async (data) => {
 
   try {
     const IST_TIMEZONE = 'Asia/Kolkata';
-
     const now = new Date();
-    const scheduledFor = scheduleTime
+
+    // If no scheduleTime is provided, use current IST time and convert to UTC
+    const scheduleTimeIST = scheduleTime
       ? scheduleTime
       : toDate(now, { timeZone: IST_TIMEZONE });
+
+    // Always store in UTC format
+    const scheduledFor = toDate(scheduleTimeIST, { timeZone: 'UTC' });
 
     const notification = await Notification.create({
       title,
