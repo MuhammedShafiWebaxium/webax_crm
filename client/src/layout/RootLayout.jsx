@@ -17,6 +17,7 @@ import { IconButton } from '@mui/material';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import NotificationSnackbar from '../components/CustomComponents/NotificationSnackbar';
 import { addNotification } from '../redux/notificationSlice';
+import ChatbotWidget from '../components/ChatbotWidget';
 
 const RootLayout = () => {
   const dispatch = useDispatch();
@@ -125,7 +126,7 @@ const RootLayout = () => {
         <IconButton
           sx={{
             position: 'fixed',
-            bottom: '30px',
+            bottom: '80px',
             right: '40px',
             p: '7px',
             borderRadius: '50%',
@@ -144,6 +145,9 @@ const RootLayout = () => {
         >
           <ExpandLessIcon sx={{ color: 'hsl(210, 100%, 30%)' }} />
         </IconButton>
+
+        {/* 🔗 Gemini Chatbot */}
+        <ChatbotWidget />
       </Box>
     </>
   );
