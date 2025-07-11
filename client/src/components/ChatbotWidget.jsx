@@ -47,10 +47,12 @@ const ChatbotWidget = () => {
     try {
       const result = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: updatedHistory.map((msg) => ({
-          role: msg.role,
-          parts: [{ text: msg.text }],
-        })),
+        contents: updatedHistory
+          .filter((msg) => msg.role === 'user' || msg.role === 'model')
+          .map((msg) => ({
+            role: msg.role,
+            parts: [{ text: msg.text }],
+          })),
         config: {
           thinkingConfig: {
             thinkingBudget: 1024,
