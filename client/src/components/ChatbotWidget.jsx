@@ -6,8 +6,9 @@ import {
   Paper,
   Typography,
   TextField,
-  CircularProgress,
   Divider,
+  FormControlLabel,
+  Switch,
 } from '@mui/material';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
@@ -24,6 +25,8 @@ const ChatbotWidget = () => {
   const [input, setInput] = useState('');
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showThoughts, setShowThoughts] = useState(false);
+
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -98,22 +101,22 @@ const ChatbotWidget = () => {
           textTransform: 'none',
           fontWeight: 600,
           fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-          borderRadius: '50px', // Softer, pill-shaped border
+          borderRadius: '50px',
           padding: { xs: '8px 16px', sm: '10px 20px' },
           fontSize: { xs: '0.85rem', sm: '1rem' },
-          background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', // Gradient background
+          background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
           color: '#ffffff',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)', // Softer, modern shadow
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
           zIndex: 1200,
           minWidth: { xs: 'auto', sm: 'auto' },
-          transition: 'all 0.3s ease-in-out', // Smooth transition for hover effects
+          transition: 'all 0.3s ease-in-out',
           '&:hover': {
-            background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)', // Darker gradient on hover
-            boxShadow: '0 6px 16px rgba(0, 0, 0, 0.3)', // Enhanced shadow on hover
-            transform: 'scale(1.05)', // Slight scale-up effect
+            background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+            boxShadow: '0 6px 16px rgba(0, 0, 0, 0.3)',
+            transform: 'scale(1.05)',
           },
           '&:active': {
-            transform: 'scale(0.95)', // Subtle press effect
+            transform: 'scale(0.95)',
           },
         }}
       >
@@ -156,9 +159,40 @@ const ChatbotWidget = () => {
               </Typography>
             </Box>
 
-            <IconButton size="small" onClick={() => setOpen(false)}>
-              <CloseIcon />
-            </IconButton>
+            <Box display="flex" alignItems="center" gap={2}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    size="small"
+                    checked={showThoughts}
+                    onChange={(e) => setShowThoughts(e.target.checked)}
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: '#ffffff',
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track':
+                        {
+                          backgroundColor: 'rgb(68, 255, 139)',
+                        },
+                      '& .MuiSwitch-track': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.84)',
+                      },
+                    }}
+                  />
+                }
+                label="Thoughts"
+                labelPlacement="start"
+                sx={{
+                  '.MuiFormControlLabel-label': {
+                    color: 'white',
+                    fontSize: '0.75rem',
+                  },
+                }}
+              />
+              <IconButton size="small" onClick={() => setOpen(false)}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
           </Box>
 
           {/* Messages */}
@@ -177,59 +211,82 @@ const ChatbotWidget = () => {
               </Typography>
             )}
 
-            {history.map((msg, index) => (
-              <Box
-                key={index}
-                sx={{
-                  mb: 1.5,
-                  alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                }}
-              >
+            {history
+              .filter((msg) => msg.role !== 'thought' || showThoughts)
+              .map((msg, index) => (
                 <Box
+                  key={index}
                   sx={{
-                    bgcolor:
-                      msg.role === 'user'
-                        ? 'primary.light'
-                        : msg.role === 'thought'
-                        ? 'grey.100'
-                        : 'grey.200',
-                    px: 2,
-                    py: 1,
-                    borderRadius: 2,
-                    maxWidth: '85%',
-                    fontStyle: msg.role === 'thought' ? 'italic' : 'normal',
+                    mb: 1.5,
+                    alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    color={
-                      msg.role === 'user'
-                        ? 'primary.dark'
-                        : msg.role === 'thought'
-                        ? 'text.secondary'
-                        : 'text.primary'
-                    }
-                    fontWeight={msg.role === 'user' ? 600 : 500}
+                  <Box
+                    sx={{
+                      bgcolor:
+                        msg.role === 'user'
+                          ? 'primary.light'
+                          : msg.role === 'thought'
+                          ? 'grey.100'
+                          : 'grey.200',
+                      px: 2,
+                      py: 1,
+                      borderRadius: 2,
+                      maxWidth: '85%',
+                      fontStyle: msg.role === 'thought' ? 'italic' : 'normal',
+                    }}
                   >
-                    {msg.role === 'user'
-                      ? 'You'
-                      : msg.role === 'model'
-                      ? 'AI'
-                      : '🧠 AI Thinking'}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ whiteSpace: 'pre-wrap', mt: 0.5 }}
-                  >
-                    {msg.text}
-                  </Typography>
+                    <Typography
+                      variant="caption"
+                      color={
+                        msg.role === 'user'
+                          ? 'primary.dark'
+                          : msg.role === 'thought'
+                          ? 'text.secondary'
+                          : 'text.primary'
+                      }
+                      fontWeight={msg.role === 'user' ? 600 : 500}
+                    >
+                      {msg.role === 'user'
+                        ? 'You'
+                        : msg.role === 'model'
+                        ? 'AI'
+                        : '🧠 AI Thinking'}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ whiteSpace: 'pre-wrap', mt: 0.5 }}
+                    >
+                      {msg.text}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-            ))}
+              ))}
 
             {loading && (
-              <Box mt={2}>
-                <CircularProgress size={20} />
+              <Box mt={1.5} pl={1}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontStyle: 'italic',
+                    color: 'text.secondary',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    '&::after': {
+                      content: '"..."',
+                      animation: 'dots 1.5s steps(3, end) infinite',
+                      fontWeight: 'bold',
+                    },
+                    '@keyframes dots': {
+                      '0%': { content: '"."' },
+                      '33%': { content: '".."' },
+                      '66%': { content: '"..."' },
+                      '100%': { content: '"."' },
+                    },
+                  }}
+                >
+                  AI Thinking
+                </Typography>
               </Box>
             )}
           </Box>
