@@ -7,7 +7,6 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { List, ListItem, ListItemText } from '@mui/material';
 import AdAccountForm from './AdAccountForm';
-import { stopLoading } from '../../../../../redux/loadingSlice';
 import { useDispatch } from 'react-redux';
 import CustomButton from '../../../../../components/CustomComponents/CustomButton';
 import { useNavigate } from 'react-router-dom';
@@ -37,9 +36,6 @@ const AdAccountStepper = () => {
     navigate('/settings', { state: { value: 'Integration' } });
   };
 
-  React.useEffect(() => {
-    dispatch(stopLoading());
-  }, []);
   return (
     <Box>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>

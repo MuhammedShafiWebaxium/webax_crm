@@ -6,8 +6,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomInput from '../../../../../components/CustomComponents/CustomInput';
 import { handleFormError } from '../../../../../utils/handleFormError';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createAdAccount } from '../../../../../services/settingServices';
-import { Box } from '@mui/material';
+import {
+  createAdAccount,
+  getIntegration,
+  updateAdAccount,
+} from '../../../../../services/settingServices';
+import { Box, Typography } from '@mui/material';
 import CustomButton from '../../../../../components/CustomComponents/CustomButton';
 import { showAlert } from '../../../../../redux/alertSlice';
 import { setUser } from '../../../../../redux/userSlice';
@@ -86,13 +90,13 @@ const AdAccountForm = ({ error, setError, setActiveStep }) => {
 
   const navigate = useNavigate();
 
-  const { currentUser } = useSelector((state) => state.user);
-
   const formValues = React.useRef(initialFormValues);
 
   const [formErrors, setFormErrors] = React.useState(null);
 
   const [btnLoading, setBtnLoading] = React.useState(false);
+
+  const [isDataFetched, setIsDataFetched] = React.useState(false);
 
   const handleInputChange = async (event) => {
     const { name, value } = event.target;
@@ -116,17 +120,26 @@ const AdAccountForm = ({ error, setError, setActiveStep }) => {
       setBtnLoading(true);
       await schema.validate(formValues.current, { abortEarly: false });
 
-      const { data } = await createAdAccount(formValues.current);
+      const { data } = id
+        ? await updateAdAccount(formValues.current, id)
+        : await createAdAccount(formValues.current);
 
       if (data.status) {
-        formValues.current = initialFormValues;
-
         if (!id) {
+          formValues.current = initialFormValues;
           setActiveStep(2);
 
           if (error) {
             setError(false);
           }
+        } else {
+          formValues.current = {
+            accountName: data?.adAccountData?.accountName || '',
+            accessToken: data?.adAccountData?.accessToken || '',
+            adId1: data?.adAccountData?.adId[0] || null,
+            adId2: data?.adAccountData?.adId[1] || null,
+          };
+          navigate('/settings', { state: { value: 'Integration' } });
         }
 
         dispatch(
@@ -148,8 +161,38 @@ const AdAccountForm = ({ error, setError, setActiveStep }) => {
     }
   };
 
+  React.useEffect(() => {
+    const fetchAccountDetails = async () => {
+      try {
+        const { data } = await getIntegration(id);
+
+        const adAccountData = data?.adAccount;
+
+        formValues.current = {
+          accountName: adAccountData?.accountName || '',
+          accessToken: adAccountData?.accessToken || '',
+          adId1: adAccountData?.adId[0] || null,
+          adId2: adAccountData?.adId[1] || null,
+        };
+      } catch (error) {
+        handleFormError(error, null, dispatch, navigate);
+      } finally {
+        setIsDataFetched(!isDataFetched);
+        dispatch(stopLoading());
+      }
+    };
+
+    if (id) fetchAccountDetails();
+  }, [id]);
+
   return (
-    <Box px={5} mt={2}>
+    <Box px={id ? 0 : 5} mt={2}>
+      {id && (
+        <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+          Edit Ad Account
+        </Typography>
+      )}
+
       <Grid
         container
         spacing={2}

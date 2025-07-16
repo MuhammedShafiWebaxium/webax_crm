@@ -9,6 +9,8 @@ import {
   deleteRole,
   getAllIntegrations,
   getAllRoles,
+  getIntegration,
+  updateAdAccount,
   updateRole,
 } from '../controllers/settingsController.js';
 
@@ -49,6 +51,18 @@ router.post(
   '/integrations/ad-account',
   isAuthorized('settings', 'create'),
   createAdAccount
+);
+
+router.get(
+  '/integrations/:id',
+  isAuthorized('settings', 'read'),
+  getIntegration
+);
+
+router.patch(
+  '/integrations/ad-account/:id',
+  isAuthorized('settings', 'update'),
+  updateAdAccount
 );
 
 // Delete a specific integration

@@ -24,8 +24,19 @@ export const getAllIntegrations = () => {
   return axiosInstance.get('settings/integrations');
 };
 
+export const getIntegration = (id) => {
+  return axiosInstance.get(`settings/integrations/${id}`);
+};
+
 export const createAdAccount = (formData) => {
   return axiosInstance.post('settings/integrations/ad-account', formData);
+};
+
+export const updateAdAccount = (formData, id) => {
+  return axiosInstance.patch(
+    `settings/integrations/ad-account/${id}`,
+    formData
+  );
 };
 
 export const deleteAdAccount = (id) => {

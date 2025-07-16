@@ -60,9 +60,8 @@ export default function Notifications() {
 
   const [loading, setLoading] = React.useState(false);
 
-  const handleClick = async (event) => {
+  const fetchNotifications = async () => {
     try {
-      setAnchorEl(event.currentTarget);
       setLoading(true);
 
       const { data } = await getAllNotifications();
@@ -76,6 +75,12 @@ export default function Notifications() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClick = async (event) => {
+    setAnchorEl(event.currentTarget);
+
+    await fetchNotifications();
   };
 
   const handleClose = () => {
@@ -120,6 +125,12 @@ export default function Notifications() {
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+
+  React.useEffect(() => {
+    (async () => {
+      await fetchNotifications();
+    })();
+  }, []);
 
   return (
     <>

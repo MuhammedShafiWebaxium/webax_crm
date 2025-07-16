@@ -27,6 +27,7 @@ import NotFound from './pages/errors/NotFound';
 import Settings from './pages/settings';
 import AdAccountStepper from './pages/settings/sections/integration/components/AdAccountStepper';
 import AdAccountForm from './pages/settings/sections/integration/components/AdAccountForm';
+import LeadProfile from './pages/leads/LeadProfile';
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -160,6 +161,17 @@ function App(props) {
                     }
                   >
                     <Route index element={<LeadFollowup />} />
+                  </Route>
+                  <Route
+                    path=":id/view-profile"
+                    element={
+                      <ProtectedRoute
+                        module="leads"
+                        requiredPermission="read"
+                      />
+                    }
+                  >
+                    <Route index element={<LeadProfile />} />
                   </Route>
                 </Route>
 

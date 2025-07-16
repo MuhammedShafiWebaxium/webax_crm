@@ -31,7 +31,7 @@ export const renderAction = (id, baseLink, text) => {
 
   return (
     <Link
-      href={`${baseLink}${id}`}
+      href={`${baseLink}${id ? id : ''}`}
       style={{
         textDecoration: 'none',
         color: theme.palette.mode === 'dark' ? '#4e9cff' : 'blue', // Adjust color based on mode
@@ -87,12 +87,12 @@ export const renderStatus = (status) => {
 };
 
 export const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    if (!isNaN(date.getTime())) {
-      return date.toISOString().split('T')[0];
-    }
-    return '';
-  };
+  const date = new Date(dateString);
+  if (!isNaN(date.getTime())) {
+    return date.toISOString().split('T')[0];
+  }
+  return '';
+};
 
 export const centeredTooltipText = (value) => (
   <Box
@@ -250,20 +250,11 @@ export const recentAdmissionsColumns = [
     field: 'action',
     headerName: 'Action',
     flex: 1,
-    renderCell: (params) => {
-      if (params.row.admissionStatus === 'Pending') {
-        return renderAction(
-          params.row._id,
-          '/admissions/approve-admission/',
-          'Approve'
-        );
-      } else {
-        return renderAction(
-          params.row._id,
-          '/leads/view-profile/',
-          'View Profile'
-        );
-      }
-    },
+    renderCell: (params) =>
+      renderAction(
+        null,
+        `/leads/${params.row._id}/view-profile`,
+        'View Profile'
+      ),
   },
 ];

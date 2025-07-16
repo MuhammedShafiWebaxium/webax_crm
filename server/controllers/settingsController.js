@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
-import { formateDashboardData, isValidObjectId } from '../helper/indexHelper.js';
+import {
+  formateDashboardData,
+  isValidObjectId,
+} from '../helper/indexHelper.js';
 import Settings from '../models/settings.js';
 import Roles from '../models/roles.js';
 import Users from '../models/user.js';
@@ -359,6 +362,84 @@ export const getAllIntegrations = async (req, res, next) => {
     res
       .status(200)
       .json({ status: 'success', settings, fbLeadsData, formattedFBLeadsData });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getIntegration = async (req, res, next) => {
+  try {
+    const {
+      user: { company },
+      params: { id },
+    } = req;
+
+    const setting = await Settings.findOne({ company }, { adAccounts: 1 });
+
+    if (!setting) {
+      const err = new Error('Settings not found');
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const adAccount = setting?.adAccounts?.find(
+      ({ _id }) => String(_id) === String(id)
+    );
+
+    if (!adAccount) {
+      const err = new Error('Ad account not found');
+      err.statusCode = 404;
+      throw err;
+    }
+
+    res.status(200).json({ status: 'success', adAccount });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateAdAccount = async (req, res, next) => {
+  try {
+    const {
+      user: { company },
+      params: { id },
+      body: { accountName, accessToken, adId1, adId2 },
+    } = req;
+
+    const setting = await Settings.findOne({ company });
+
+    if (!setting) {
+      const err = new Error('Settings not found');
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const index = setting.adAccounts.findIndex(
+      (acc) => String(acc._id) === String(id)
+    );
+
+    if (index === -1) {
+      const err = new Error('Ad account not found');
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const updatedAccount = {
+      ...setting.adAccounts[index].toObject(),
+    };
+
+    if (accountName !== undefined) updatedAccount.accountName = accountName;
+    if (accessToken !== undefined) updatedAccount.accessToken = accessToken;
+    if (adId1 !== undefined || adId2 !== undefined) {
+      updatedAccount.adId = [adId1, adId2].filter(Boolean);
+    }
+
+    setting.adAccounts[index] = updatedAccount;
+    await setting.save();
+
+    res
+      .status(200)
+      .json({ status: 'success', adAccount: setting.adAccounts[index] });
   } catch (err) {
     next(err);
   }
