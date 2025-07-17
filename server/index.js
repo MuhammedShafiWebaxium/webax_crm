@@ -16,7 +16,10 @@ import todosRouter from './routes/todosRoute.js';
 import settingsRouter from './routes/settingsRoute.js';
 import ticketsRouter from './routes/ticketsRoute.js';
 import notificationsRouter from './routes/notificationRoute.js';
-import { registerNotificationCron } from './cron/notification.cron.js';
+
+// Import notification system
+import { startNotificationWorker } from './services/queues/notification.worker.js';
+import { setupNotificationCron } from './cron/notification.cron.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -39,7 +42,20 @@ const startServer = async () => {
     // Do NOT stop the server; app can still run without Socket.io
   }
 
-  registerNotificationCron(); // ✅ Start your cron job after DB and socket are ready
+  // Start Notification System
+  try {
+    // Start BullMQ Worker
+    startNotificationWorker();
+
+    // Start Cron Scheduler
+    setupNotificationCron();
+
+    console.log('🔔 Notification system initialized');
+  } catch (error) {
+    console.error('⚠️ Notification system initialization failed:', error);
+    // Critical system - you might want to exit here if notifications are essential
+    // process.exit(1);
+  }
 
   const PORT = process.env.PORT;
 
