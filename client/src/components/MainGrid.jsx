@@ -1004,10 +1004,7 @@ const MainGrid = () => {
                     ) : (
                       <Box
                         sx={{
-                          p: 3,
                           borderRadius: 2,
-                          boxShadow: 3,
-                          backgroundColor: 'background.paper',
                           textAlign: 'center',
                         }}
                       >
@@ -1024,7 +1021,7 @@ const MainGrid = () => {
                         </Typography>
                         <Button
                           variant="contained"
-                          href="/tasks/create"
+                          href="/todos"
                           sx={{ mt: 1 }}
                         >
                           Create New Task
