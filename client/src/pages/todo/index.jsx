@@ -15,6 +15,7 @@ import { setTodos } from '../../redux/todoSlice';
 import { Link, Stack, Typography, useTheme } from '@mui/material';
 import BasicDataGrid from '../../components/CustomComponents/BasicDataGrid';
 import { useNavigate } from 'react-router-dom';
+import CustomizedAccordions from '../../components/CustomComponents/CustomizedAccordions';
 
 const displayDate = (date) => {
   const d = new Date(date);
@@ -34,6 +35,9 @@ const TodosList = () => {
 
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [open, setOpen] = useState(false);
+
+  const [activeTodos, setActiveTodos] = useState([]);
+  const [completedTodos, setCompletedTodos] = useState([]);
 
   // Flattened permissions object (e.g. { 'todos.read': true, 'todos.create': true, ... })
   const permissions = currentUser?.role?.permissions || {};
@@ -61,7 +65,7 @@ const TodosList = () => {
       const { data } = await deleteTodo(id);
       if (data.status) {
         const updatedTodos = todos.filter(
-          (todo) => todo?._id?.toString() !== id
+          (todo) => todo?.id?.toString() !== id
         );
         dispatch(setTodos(formatTodos(updatedTodos)));
       }
@@ -70,13 +74,13 @@ const TodosList = () => {
     }
   };
 
-  const handleComplete = async (id) => {
+  const handleComplete = async (id) => {console.log(id)
     if (!canUpdate) return; // treat complete as update permission required
     try {
       const { data } = await markTodoCompleted(id);
       if (data.status) {
         const updatedTodos = todos.map((todo) => {
-          if (todo?._id?.toString() === id) {
+          if (todo?.id?.toString() === id) {
             return {
               ...todo,
               status: data?.todo?.status,
@@ -211,6 +215,20 @@ const TodosList = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (todos?.length) {
+      const activeTodos = todos?.filter(
+        (entry) => entry.status !== 'Completed'
+      );
+      const completedTodos = todos?.filter(
+        (entry) => entry.status == 'Completed'
+      );
+
+      setActiveTodos(activeTodos);
+      setCompletedTodos(completedTodos);
+    }
+  }, [todos]);
+
   return (
     <>
       <Stack direction={'row'} alignItems={'center'} mb={2} spacing={2}>
@@ -235,7 +253,32 @@ const TodosList = () => {
         {canCreate && renderButton(handleClickOpen, 'Add Todo')}
       </Stack>
 
-      <BasicDataGrid columns={AllTodosColumns} rows={todos} checkbox={false} />
+      <CustomizedAccordions
+        panelData={[
+          {
+            title: `Active Tasks ${activeTodos?.length}`,
+            content: (
+              <BasicDataGrid
+                columns={AllTodosColumns}
+                rows={activeTodos}
+                checkbox={false}
+              />
+            ),
+          },
+          {
+            title: `Completed Tasks ${completedTodos?.length}`,
+            content: (
+              <BasicDataGrid
+                columns={AllTodosColumns?.filter(
+                  (entry) => entry?.headerName !== 'Action'
+                )}
+                rows={completedTodos}
+                checkbox={false}
+              />
+            ),
+          },
+        ]}
+      />
     </>
   );
 };

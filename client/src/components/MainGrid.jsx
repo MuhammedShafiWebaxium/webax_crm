@@ -15,7 +15,7 @@ import {
   renderStatus,
 } from '../internals/data/GridData';
 import { useTheme } from '@mui/material/styles';
-import { Chip, Link, Skeleton } from '@mui/material';
+import { Button, Checkbox, Chip, Divider, Link, List, ListItem, ListItemIcon, ListItemText, Skeleton } from '@mui/material';
 import CustomInput from './CustomComponents/CustomInput';
 import DraggableDialog from './CustomComponents/DraggableDialog';
 import { useDispatch, useSelector } from 'react-redux';
@@ -913,89 +913,123 @@ const MainGrid = () => {
                   // titleSx={{ mb: 0 }}
                   content={
                     currentTodo ? (
-                      <Box>
-                        <Typography
-                          component="h2"
-                          variant="subtitle2"
-                          gutterBottom
-                          mb={0}
-                        >
-                          {currentTodo?.name || 'N/A'}
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 2,
+                        }}
+                      >
+                        {/* Title & Description */}
+                        <Typography variant="h6">
+                          {currentTodo?.name || 'Untitled Task'}
                         </Typography>
-                        <Typography
-                          variant="caption"
-                          gutterBottom
-                          sx={{ display: 'block' }}
-                        >
-                          {currentTodo?.description || 'N/A'}
+                        <Typography variant="body2" color="text.secondary">
+                          {currentTodo?.description ||
+                            'No description available.'}
                         </Typography>
 
-                        <Stack spacing={1}>
+                        {/* Info Chips */}
+                        <Stack direction="row" spacing={2}>
                           <Box>
-                            <Stack direction="row">
-                              <div style={{ display: 'flex', flex: 1 }}>
-                                <span className="todo-dashboard-label">
-                                  Due Date
-                                </span>
-                                <span className="todo-dashboard-divider"></span>
-                              </div>
-                              <div style={{ display: 'flex', flex: 1 }}>
-                                <span className="todo-dashboard-label">
-                                  Priority
-                                </span>
-                                <span className="todo-dashboard-divider"></span>
-                              </div>
-                            </Stack>
-
-                            <Stack direction={'row'}>
-                              <div style={{ flex: 1 }}>
-                                <Chip
-                                  size="small"
-                                  color={'default'}
-                                  label={formatDate(currentTodo?.endDate)}
-                                />
-                              </div>
-                              <div style={{ flex: 1 }}>
-                                <Chip
-                                  size="small"
-                                  color={
-                                    currentTodo?.priority === 'High'
-                                      ? 'error'
-                                      : currentTodo?.priority === 'Medium'
-                                      ? 'warning'
-                                      : 'success'
-                                  }
-                                  label={currentTodo?.priority}
-                                />
-                              </div>
-                            </Stack>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              gutterBottom
+                            >
+                              Due Date
+                            </Typography>
+                            <Chip
+                              label={formatDate(currentTodo?.endDate)}
+                              size="small"
+                              variant="outlined"
+                            />
                           </Box>
-
-                          <DividerText text={'Checklist'} />
-
                           <Box>
-                            <ul style={{ padding: '0 20px' }}>
-                              {currentTodo?.checklist?.map((entry, idx) => (
-                                <li key={idx}>{entry?.title}</li>
-                              ))}
-                            </ul>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              gutterBottom
+                            >
+                              Priority
+                            </Typography>
+                            <Chip
+                              label={currentTodo?.priority}
+                              size="small"
+                              color={
+                                currentTodo?.priority === 'High'
+                                  ? 'error'
+                                  : currentTodo?.priority === 'Medium'
+                                  ? 'warning'
+                                  : 'success'
+                              }
+                            />
                           </Box>
                         </Stack>
+
+                        {/* Checklist Section */}
+                        <Divider />
+                        <Typography variant="subtitle2">Checklist</Typography>
+
+                        {currentTodo?.checklist?.length ? (
+                          <List dense>
+                            {currentTodo.checklist.map((entry, idx) => (
+                              <ListItem key={idx} disablePadding>
+                                <ListItemIcon>
+                                  <Checkbox
+                                    checked={entry?.completed}
+                                    color="primary"
+                                  />
+                                </ListItemIcon>
+                                <ListItemText
+                                  primary={entry?.title}
+                                  sx={{
+                                    textDecoration: entry?.completed
+                                      ? 'line-through'
+                                      : 'none',
+                                    color: entry?.completed
+                                      ? 'text.disabled'
+                                      : 'text.primary',
+                                  }}
+                                />
+                              </ListItem>
+                            ))}
+                          </List>
+                        ) : (
+                          <Typography variant="body2" color="text.secondary">
+                            No items added to the checklist.
+                          </Typography>
+                        )}
                       </Box>
                     ) : (
-                      <Stack spacing={1}>
-                        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-
-                        <Skeleton variant="circular" width={40} height={40} />
-                        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                      </Stack>
+                      <Box
+                        sx={{
+                          p: 3,
+                          borderRadius: 2,
+                          boxShadow: 3,
+                          backgroundColor: 'background.paper',
+                          textAlign: 'center',
+                        }}
+                      >
+                        <Typography variant="h6" gutterBottom>
+                          No Task Selected
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ mb: 2 }}
+                        >
+                          Select a task to view details or create a new one to
+                          get started.
+                        </Typography>
+                        <Button
+                          variant="contained"
+                          href="/tasks/create"
+                          sx={{ mt: 1 }}
+                        >
+                          Create New Task
+                        </Button>
+                      </Box>
                     )
                   }
                 />
