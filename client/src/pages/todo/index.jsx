@@ -12,10 +12,14 @@ import {
 import { setUsers } from '../../redux/companySlice';
 import { format, isToday, isYesterday, isTomorrow } from 'date-fns';
 import { setTodos } from '../../redux/todoSlice';
-import { Link, Stack, Typography, useTheme } from '@mui/material';
+import { Chip, Link, Stack, Typography, useTheme } from '@mui/material';
 import BasicDataGrid from '../../components/CustomComponents/BasicDataGrid';
 import { useNavigate } from 'react-router-dom';
 import CustomizedAccordions from '../../components/CustomComponents/CustomizedAccordions';
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import AddAlarmIcon from '@mui/icons-material/AddAlarm';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import { renderStatus as renderChip } from '../../internals/data/GridData';
 
 const displayDate = (date) => {
   const d = new Date(date);
@@ -74,13 +78,15 @@ const TodosList = () => {
     }
   };
 
-  const handleComplete = async (id) => {console.log(id)
+  const handleComplete = async (id) => {
     if (!canUpdate) return; // treat complete as update permission required
+
     try {
       const { data } = await markTodoCompleted(id);
+
       if (data.status) {
         const updatedTodos = todos.map((todo) => {
-          if (todo?.id?.toString() === id) {
+          if (String(todo?.id) === String(id)) {
             return {
               ...todo,
               status: data?.todo?.status,
@@ -88,7 +94,9 @@ const TodosList = () => {
           }
           return todo;
         });
-        dispatch(setTodos(formatTodos(updatedTodos)));
+
+        const formattedTodos = formatTodos(updatedTodos);
+        dispatch(setTodos(formattedTodos));
       }
     } catch (error) {
       handleFormError(error, null, dispatch, navigate);
@@ -97,7 +105,7 @@ const TodosList = () => {
 
   const handleClickEdit = (id) => {
     if (!canUpdate) return; // block if no update permission
-    const todo = todos.find((entry) => entry?.id?.toString() === id);
+    const todo = todos.find((entry) => String(entry?.id) === String(id));
 
     setSelectedTodo(todo);
     setOpen(true);
@@ -124,6 +132,23 @@ const TodosList = () => {
     );
   };
 
+  const renderStatus = (status) => {
+    return (
+      <Stack direction={'row'} alignItems={'center'} height={'100%'} gap={0.5}>
+        <Typography variant="body2" gutterBottom mb={0}>
+          {status}
+        </Typography>
+        {status === 'Active' ? (
+          <RocketLaunchIcon fontSize="small" sx={{ color: 'blue' }} />
+        ) : status === 'Pending' ? (
+          <AddAlarmIcon fontSize="small" sx={{ color: 'blue' }} />
+        ) : (
+          <CheckBoxIcon fontSize="small" sx={{ color: 'green' }} />
+        )}
+      </Stack>
+    );
+  };
+
   const AllTodosColumns = [
     { field: 'name', headerName: 'Name', flex: 1 },
     {
@@ -145,11 +170,13 @@ const TodosList = () => {
       field: 'priority',
       headerName: 'Priority',
       flex: 1,
+      renderCell: (params) => renderChip(params.row.priority),
     },
     {
       field: 'status',
       headerName: 'Status',
       flex: 1,
+      renderCell: (params) => renderStatus(params.row.status),
     },
     {
       field: 'action',
@@ -171,8 +198,13 @@ const TodosList = () => {
   const formatTodos = (todos) => {
     return todos.map((todo) => {
       const isPending = new Date(todo?.endDate) < new Date();
+      const status =
+        todo?.status !== 'Completed' && isPending
+          ? 'Pending'
+          : todo?.status ?? 'N/A';
+
       return {
-        id: todo?._id ?? 'N/A',
+        id: todo?._id || todo?.id,
         name: todo?.name ?? 'N/A',
         type: todo?.type ?? 'N/A',
         description: todo?.description ?? 'N/A',
@@ -185,10 +217,7 @@ const TodosList = () => {
         createdBy: todo?.createdBy?.name ?? 'N/A',
         date: displayDate(todo?.endDate) ?? 'N/A',
         priority: todo?.priority ?? 'N/A',
-        status:
-          todo?.status !== 'Completed' && isPending
-            ? 'Pending'
-            : todo?.status ?? 'N/A',
+        status,
       };
     });
   };
@@ -256,7 +285,14 @@ const TodosList = () => {
       <CustomizedAccordions
         panelData={[
           {
-            title: `Active Tasks ${activeTodos?.length}`,
+            title: (
+              <Stack direction="row" spacing={1} alignItems={'center'}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Active Tasks
+                </Typography>
+                <Chip label={activeTodos?.length} />
+              </Stack>
+            ),
             content: (
               <BasicDataGrid
                 columns={AllTodosColumns}
@@ -266,7 +302,14 @@ const TodosList = () => {
             ),
           },
           {
-            title: `Completed Tasks ${completedTodos?.length}`,
+            title: (
+              <Stack direction="row" spacing={1} alignItems={'center'}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Completed Tasks
+                </Typography>
+                <Chip label={completedTodos?.length} />
+              </Stack>
+            ),
             content: (
               <BasicDataGrid
                 columns={AllTodosColumns?.filter(

@@ -5,7 +5,7 @@ import ColorModeIconDropdown from '../theme/shared/ColorModeIconDropdown';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 
 import Search from './Search';
-import CustomDateRange from './CustomComponents/CustomDateRange';
+// import CustomDateRange from './CustomComponents/CustomDateRange';
 import Notifications from './CustomComponents/Notifications';
 import SortSharpIcon from '@mui/icons-material/SortSharp';
 import NotesSharpIcon from '@mui/icons-material/NotesSharp';
@@ -68,7 +68,7 @@ export default function Header({ collapse, setCollapse }) {
       </Stack>
       <Stack direction="row" sx={{ gap: 1 }}>
         <Search />
-        <CustomDateRange />
+        {/* <CustomDateRange /> */}
         <MenuButton aria-label="Full screen" onClick={toggleFullScreen}>
           {isFullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
         </MenuButton>

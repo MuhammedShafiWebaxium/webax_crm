@@ -72,7 +72,9 @@ export const renderStatus = (status) => {
     followup: 'default',
     Active: 'success',
     Admitted: 'success',
+    Low: 'success',
     Pending: 'warning',
+    Medium: 'warning',
     'Awaiting Approval': 'warning',
     update: 'default',
     Offline: 'default',
@@ -80,6 +82,7 @@ export const renderStatus = (status) => {
     Rejected: 'error',
     Inactive: 'error',
     Ineligible: 'error',
+    High: 'error',
     delete: 'default',
   };
 
