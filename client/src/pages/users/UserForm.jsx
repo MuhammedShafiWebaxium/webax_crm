@@ -281,7 +281,7 @@ const UserForm = () => {
       : { ...initialFormValue };
   };
 
-  const updateInputData = (formattedCompanies, companies) => {
+  const updateInputData = (formattedCompanies, companies, roles) => {
     const updatedInputData = inputData.map((entry) => {
       if (entry.name === 'password' && !id) {
         return {
@@ -298,22 +298,38 @@ const UserForm = () => {
         };
       }
 
-      if (entry.name === 'role' && id && canUpdate) {
-        const company = companies.find(
-          (entry) => String(entry._id) === formValues.current.company
-        );
+      if (entry.name === 'role') {
+        let roleOptions = null;
+        let hidden = true;
 
-        const roleOptions = company.roles?.map((role) => {
-          return {
-            value: role?._id,
-            label: role?.name,
-          };
-        });
+        if (canCreateCompanies && id) {
+          const company = companies.find(
+            (entry) => String(entry._id) === formValues.current.company
+          );
+
+          roleOptions = company?.roles?.map((role) => {
+            return {
+              value: role?._id,
+              label: role?.name,
+            };
+          });
+
+          hidden = false;
+        } else if (!canCreateCompanies || id) {
+          roleOptions = roles?.map((role) => {
+            return {
+              value: role?._id,
+              label: role?.name,
+            };
+          });
+
+          hidden = false;
+        }
 
         return {
           ...entry,
           data: roleOptions,
-          hidden: false,
+          hidden,
         };
       }
 
@@ -340,7 +356,7 @@ const UserForm = () => {
           }) || [];
 
         updateFormValues(data.user);
-        updateInputData(formattedCompanies, data?.companies);
+        updateInputData(formattedCompanies, data?.companies, data?.roles);
         setCompanies(data?.companies);
       } catch (error) {
         handleFormError(error, null, dispatch, navigate);

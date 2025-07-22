@@ -66,7 +66,7 @@ const createCompany = async (req, res, next) => {
         status: 'Active',
       });
 
-      await newCompany.save({ session });
+      // await newCompany.save({ session });
 
       const settings = new Settings({
         company: newCompany._id,
@@ -98,6 +98,13 @@ const createCompany = async (req, res, next) => {
             update: true,
             delete: true,
           },
+          settings: {
+            create: true,
+            read: true,
+            update: true,
+            delete: true,
+          },
+          feedback: { read: true },
           exports: { allowed: true },
           filters: { allowed: true },
         },

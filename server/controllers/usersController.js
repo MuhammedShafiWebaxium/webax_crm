@@ -1,6 +1,7 @@
 // userController.js
 import bcrypt from 'bcryptjs';
 import Users from '../models/user.js';
+import Roles from '../models/roles.js';
 import {
   getAllCompaniesHelper,
   getAllUsersHelper,
@@ -39,6 +40,7 @@ export const getUserFormData = async (req, res, next) => {
 
     let user = null;
     let companies = null;
+    let roles = null;
     const canReadCompanies = role.permissions.companies.read;
 
     if (id && id !== 'undefined') {
@@ -61,9 +63,14 @@ export const getUserFormData = async (req, res, next) => {
 
     if (canReadCompanies) {
       companies = await getAllCompaniesHelper();
+    } else {
+      roles = await Roles.find({
+        _id: { $ne: '682d796783a4065cddeeb860' },
+        company,
+      }).populate('createdBy', 'name');
     }
 
-    res.status(200).json({ status: 'success', user, companies });
+    res.status(200).json({ status: 'success', user, companies, roles });
   } catch (err) {
     next(err);
   }
@@ -89,7 +96,7 @@ export const createUser = async (req, res, next) => {
       selectedCompany = body.company;
     }
 
-    const companyRecord = await getCompanyHelper(body.company);
+    const companyRecord = await getCompanyHelper(selectedCompany);
     if (!companyRecord) throw new Error('The company does not exist');
 
     const existingUsers = await Users.find({ company: selectedCompany });
