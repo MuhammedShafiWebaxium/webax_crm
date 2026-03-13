@@ -1,5 +1,5 @@
-import User from '../models/user.js';
-import jwt from 'jsonwebtoken';
+import User from "../models/user.js";
+import jwt from "jsonwebtoken";
 
 export const requireAuth = async (req, res, next) => {
   try {
@@ -14,21 +14,21 @@ export const requireAuth = async (req, res, next) => {
     const userId = decoded?.id;
 
     const user = await User.findById(userId)
-      .populate({ path: 'company', select: 'status name' })
-      .populate({ path: 'role' });
+      .populate({ path: "company", select: "status name" })
+      .populate({ path: "role" });
 
     if (!user) {
       req.user = { isAuthenticated: false };
       return next();
     }
 
-    if (user.company.status !== 'Active')
-      throw new Error('The company has been suspended');
+    if (user.company.status !== "Active")
+      throw new Error("The company has been suspended");
 
-    if (user.status !== 'Active')
-      throw new Error('The user has been suspended');
+    if (user.status !== "Active")
+      throw new Error("The user has been suspended");
 
-    if (!user.role.active) throw new Error('The role has been suspended');
+    if (!user.role.active) throw new Error("The role has been suspended");
 
     req.user = {
       userId: user._id,
@@ -57,7 +57,7 @@ export const isAuthenticated = async (req, res, next) => {
     }
 
     console.log(`Unauthorized access attempt: ${req.originalUrl}`);
-    const error = new Error('Authentication required.');
+    const error = new Error("Authentication required.");
     error.statusCode = 401;
     throw error;
   } catch (err) {
@@ -69,7 +69,7 @@ export const isAuthorized = (module, action) => {
   return (req, res, next) => {
     try {
       if (!req.user || !req.user.isAuthenticated) {
-        const error = new Error('Authentication required.');
+        const error = new Error("Authentication required.");
         error.statusCode = 401;
         throw error;
       }
@@ -77,7 +77,7 @@ export const isAuthorized = (module, action) => {
       const role = req.user.role;
 
       if (!role?.active || role?.permissions?.[module]?.[action] !== true) {
-        const error = new Error('Forbidden: Insufficient permissions.');
+        const error = new Error("Forbidden: Insufficient permissions.");
         error.statusCode = 403;
         throw error;
       }
